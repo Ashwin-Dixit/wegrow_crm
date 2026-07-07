@@ -1,22 +1,23 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { Zap, Eye, EyeOff, Lock, Mail } from 'lucide-react'
 import Input from '../components/ui/Input'
 import Button from '../components/ui/Button'
+import { useAuth } from '../context/AuthProvider'
 
 export default function LoginPage() {
   const navigate = useNavigate()
   const [showPass, setShowPass] = useState(false)
   const [form, setForm] = useState({ email: '', password: '' })
   const [loading, setLoading] = useState(false)
+  const {login} = useAuth()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
-      navigate('/')
-    }, 1000)
+    const data = await login(form)
+    setLoading(false)
+    navigate('/')
   }
 
   return (
@@ -89,7 +90,7 @@ export default function LoginPage() {
 
           <div className="mt-6 pt-6 border-t border-[#e6e0e9] text-center">
             <p className="text-[12px] text-[#7a7582]">
-              Demo credentials: any email + any password
+              Don't have an account? <Link to="/signup" className="text-[#6750a4] hover:text-[#4f378a] font-medium transition-colors">Sign In</Link>
             </p>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthProvider";
 import {
   LayoutDashboard,
   Users,
@@ -21,6 +22,11 @@ const navItems = [
 
 export default function Sidebar({ collapsed, setCollapsed }) {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const handleLogout = async () => {
+    const data = await logout();
+    navigate("/login");
+  };
 
   return (
     <aside
@@ -129,18 +135,21 @@ export default function Sidebar({ collapsed, setCollapsed }) {
         {!collapsed && (
           <div className="flex items-center gap-3 px-3 py-2 rounded-full hover:bg-[#6750a4]/8 cursor-pointer transition-colors">
             <div className="w-8 h-8 rounded-full bg-[#e9ddff] flex items-center justify-center text-[12px] font-semibold text-[#4f378a] shrink-0">
-              PN
+              {user.fullname.split(" ").map(word => word[0]).join("")}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-semibold text-[#1d1b20] truncate">
-                Ashwin
+              <p className="text-[15px] font-bold text-[#5959ab] truncate">
+                {user.fullname}
               </p>
-              <p className="text-[11px] text-[#7a7582] truncate">Senior AE</p>
+              <p className="text-[11px] text-[#7a7582] truncate">{user.role}</p>
+              <p className="text-[13px] font-semibold text-[#1d1b20] truncate">
+                {user.email}
+              </p>
             </div>
             <LogOut
               size={16}
               className="text-[#7a7582] hover:text-[#ba1a1a] shrink-0 cursor-pointer"
-              onClick={() => navigate("/login")}
+              onClick={handleLogout}
               title="Logout"
             />
           </div>

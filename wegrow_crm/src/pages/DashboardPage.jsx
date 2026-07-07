@@ -23,6 +23,7 @@ import {
   mockActivities,
   mockTeamMembers,
 } from "../data/mockData";
+import { useAuth } from "../context/AuthProvider";
 
 function formatCurrency(val) {
   if (val >= 10000000) return `₹${(val / 10000000).toFixed(2)} Cr`;
@@ -41,6 +42,7 @@ const ACTIVITY_ICONS = {
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const {user} = useAuth()
   const recentLeads = mockLeads.slice(0, 5);
 
   return (
@@ -49,7 +51,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-[24px] font-semibold text-[#1d1b20]">
-            Good morning, Ashwin! 👋
+            Good morning, {user.fullname}! 👋
           </h2>
           <p className="text-[14px] text-[#7a7582] mt-1">
             Here's what's happening with your pipeline today.

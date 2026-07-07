@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Bell, Search, Menu } from 'lucide-react'
 import Avatar from '../ui/Avatar'
+import { useAuth } from '../../context/AuthProvider'
 
 const PAGE_TITLES = {
   '/':           'Dashboard',
@@ -21,6 +22,7 @@ function getTitle(pathname) {
 export default function TopBar({ onMenuClick }) {
   const { pathname } = useLocation()
   const [showNotif, setShowNotif] = useState(false)
+  const {user} = useAuth()
 
   return (
     <header className="h-16 bg-[#fdf7ff]/90 backdrop-blur-md border-b border-[#e6e0e9] flex items-center px-6 gap-4 sticky top-0 z-10">
@@ -44,7 +46,6 @@ export default function TopBar({ onMenuClick }) {
       <div className="hidden sm:flex items-center gap-2 h-10 px-4 rounded-full bg-[#f2ecf4] border border-[#e6e0e9] text-[#7a7582] text-[13px] min-w-[200px] cursor-pointer hover:border-[#6750a4]/40 transition-colors">
         <Search size={15} />
         <span>Search...</span>
-        <span className="ml-auto text-[11px] bg-[#e6e0e9] px-2 py-0.5 rounded-full">⌘K</span>
       </div>
 
       {/* Notifications */}
@@ -79,7 +80,7 @@ export default function TopBar({ onMenuClick }) {
       </div>
 
       {/* Avatar */}
-      <Avatar initials="PN" size="md" color="primary" />
+      <Avatar initials={user.fullname.split(" ").map(word => word[0]).join("")} size="md" color="primary" />
     </header>
   )
 }
