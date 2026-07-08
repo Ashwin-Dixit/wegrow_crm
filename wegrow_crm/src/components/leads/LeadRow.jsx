@@ -1,17 +1,17 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Phone, Mail, MoreVertical } from 'lucide-react'
-import Badge from '../ui/Badge'
-import Avatar from '../ui/Avatar'
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Phone, Mail, MoreVertical } from "lucide-react";
+import Badge from "../ui/Badge";
+import Avatar from "../ui/Avatar";
 
 function formatCurrency(val) {
-  if (val >= 1000000) return `₹${(val / 1000000).toFixed(1)}M`
-  if (val >= 1000) return `₹${(val / 1000).toFixed(0)}K`
-  return `₹${val}`
+  if (val >= 1000000) return `₹${(val / 1000000).toFixed(1)}M`;
+  if (val >= 1000) return `₹${(val / 1000).toFixed(0)}K`;
+  return `₹${val}`;
 }
 
 export default function LeadRow({ lead }) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <tr
@@ -22,7 +22,11 @@ export default function LeadRow({ lead }) {
       <td className="px-4 py-3">
         <div className="flex items-center gap-3">
           <Avatar
-            initials={lead.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
+            initials={lead.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .slice(0, 2)}
             size="sm"
             color="auto"
           />
@@ -48,7 +52,7 @@ export default function LeadRow({ lead }) {
       {/* Value */}
       <td className="px-4 py-3">
         <span className="text-[14px] font-semibold text-[#4f378a]">
-          {formatCurrency(lead.value)}
+          {formatCurrency(0)}
         </span>
       </td>
 
@@ -59,7 +63,14 @@ export default function LeadRow({ lead }) {
 
       {/* Last Contact */}
       <td className="px-4 py-3">
-        <span className="text-[12px] text-[#7a7582]">{lead.lastContact}</span>
+        <span className="text-[12px] text-[#7a7582]">{`${new Date(
+          lead.updatedAt,
+        ).toLocaleDateString("en-IN")}, ${new Date(
+          lead.updatedAt,
+        ).toLocaleTimeString("en-IN", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}`}</span>
       </td>
 
       {/* Actions */}
@@ -82,5 +93,5 @@ export default function LeadRow({ lead }) {
         </div>
       </td>
     </tr>
-  )
+  );
 }

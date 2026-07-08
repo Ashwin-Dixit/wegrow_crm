@@ -1,11 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
+import {useDispatch} from 'react-redux'
+import { fetchLeads } from '../../store/lead/leadThunks'
 import Sidebar from './Sidebar'
 import TopBar from './TopBar'
 
 export default function AppLayout() {
   const [collapsed, setCollapsed] = useState(false)
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
+  const dispatch = useDispatch()
+  useEffect(()=>{
+    dispatch(fetchLeads())
+  }, [])
 
   return (
     <div className="flex h-screen bg-[#fdf7ff] overflow-hidden">

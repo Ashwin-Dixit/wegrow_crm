@@ -1,0 +1,97 @@
+const supabase = require("../config/supabase");
+
+exports.createLead = async (req, res) => {
+  const { name, company, email, phone, notes, source } = req.body;
+  try {
+    const { data: employee, error: employeeError } = await supabase
+      .from("employees")
+      .select("id")
+      .eq("auth_user_id", req.user.id)
+      .single();
+    if (employeeError) {
+      console.log("error in fetching employee ", employeeError);
+      return res
+        .status(400)
+        .json({ success: false, message: employeeError.message });
+    }
+    console.log(employee);
+    const { data: lead, error: leadError } = await supabase
+      .from("leads")
+      .insert({
+        name,
+        company,
+        email,
+        phone,
+        notes,
+        source,
+        assigned_to: employee.id,
+      })
+      .select()
+      .single();
+    if (leadError) {
+      console.log("error in creating lead", leadError);
+      return res
+        .status(400)
+        .json({ success: false, message: leadError.message });
+    }
+    return res
+      .status(201)
+      .json({ success: true, message: "Lead created successfully", lead });
+  } catch (error) {
+    console.log("error in creating lead", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+};
+exports.getLeads = async (req, res, next) => {
+  try {
+    const { data: employee, error: employeeError } = await supabase
+      .from("employees")
+      .select("id, full_name, employee_id")
+      .eq("auth_user_id", req.user.id)
+      .single();
+    if (employeeError) {
+      console.log("error in fetching employee", employeeError);
+      return res
+        .status(400)
+        .json({ success: false, message: employeeError.message });
+    }
+    const { data: leads, error: leadsError } = await supabase
+      .from("leads")
+      .select("*")
+      .eq("assigned_to", employee.id)
+      .order("created_at", { ascending: false });
+    if (leadsError) {
+      console.log("error in fetching leads", leadsError);
+      return res
+        .status(400)
+        .json({ success: false, message: leadsError.message });
+    }
+    const leadsArray = [];
+    leads.forEach((lead) => {
+      leadsArray.push({
+        id: lead.id,
+        name: lead.name,
+        company: lead.company,
+        email: lead.email,
+        phone: lead.phone,
+        status: lead.status,
+        notes: lead.notes,
+        source: lead.source,
+        assignedTo: employee.full_name,
+        employeeId: employee.employee_id,
+        createdAt: new Date(lead.created_at),
+        updatedAt: new Date(lead.updated_at),
+      });
+    });
+    return res
+      .status(200)
+      .json({ success: true, message: "Leads fetched successfully", leads: leadsArray });
+  } catch (error) {
+    console.log("error in fetching leads", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+};

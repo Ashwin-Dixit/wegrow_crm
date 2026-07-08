@@ -4,6 +4,7 @@ const authContext = createContext();
 
 const  AuthProvider = ({children}) => {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true)
     useEffect(() => {
         async function getUser(){
             try{
@@ -11,10 +12,14 @@ const  AuthProvider = ({children}) => {
                 setUser(data.user)
             } catch(error){
                 console.log(error)
+                setUser(null)
+            }
+            finally{
+                setLoading(false)
             }
         }
         getUser()
-    }, [user])
+    }, [])
 
     const signup = async ({fullname, email, employeeId, password}) => {
         const data = await signupService({fullname, email, employeeId, password})
@@ -34,7 +39,7 @@ const  AuthProvider = ({children}) => {
         return data
     }
     return(
-        <authContext.Provider value={{signup, login, logout, user}}>
+        <authContext.Provider value={{signup, login, logout, user, loading}}>
             {children}
         </authContext.Provider>
     )

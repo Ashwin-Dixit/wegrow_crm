@@ -4,6 +4,7 @@ import {
   RouterProvider,
   Navigate,
 } from "react-router-dom";
+import {Provider} from "react-redux"
 import AppLayout from "./components/layout/AppLayout";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
@@ -15,6 +16,7 @@ import ClientDetailPage from "./pages/ClientDetailPage";
 import AddLeadPage from "./pages/AddLeadPage";
 import AuthProvider from "./context/AuthProvider";
 import AuthProtected from "./components/protection/AuthProtected";
+import store from "./store/reduxStore";
 
 const router = createBrowserRouter([
   {
@@ -57,7 +59,9 @@ export default function AppRouter() {
   return (
     <>
       <AuthProvider>
-        <RouterProvider router={router} />
+        <Provider store={store}>
+          <RouterProvider router={router} />
+        </Provider>
       </AuthProvider>
     </>
   );

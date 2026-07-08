@@ -17,13 +17,9 @@ import Card, { CardHeader } from "../components/ui/Card";
 import Badge from "../components/ui/Badge";
 import Avatar from "../components/ui/Avatar";
 import Button from "../components/ui/Button";
-import {
-  mockStats,
-  mockLeads,
-  mockActivities,
-  mockTeamMembers,
-} from "../data/mockData";
+import { mockStats, mockActivities, mockTeamMembers } from "../data/mockData";
 import { useAuth } from "../context/AuthProvider";
+import { useSelector } from "react-redux";
 
 function formatCurrency(val) {
   if (val >= 10000000) return `₹${(val / 10000000).toFixed(2)} Cr`;
@@ -42,8 +38,9 @@ const ACTIVITY_ICONS = {
 
 export default function DashboardPage() {
   const navigate = useNavigate();
-  const {user} = useAuth()
-  const recentLeads = mockLeads.slice(0, 5);
+  const { user } = useAuth();
+  const { leads } = useSelector((state) => state.leads);
+  const recentLeads = leads.slice(0, 5);
 
   return (
     <div className="space-y-6">
@@ -178,7 +175,7 @@ export default function DashboardPage() {
                       </td>
                       <td className="px-4 py-3">
                         <span className="text-[13px] font-semibold text-[#4f378a]">
-                          {formatCurrency(lead.value)}
+                          {formatCurrency(0)}
                         </span>
                       </td>
                       <td className="px-4 py-3">
@@ -188,7 +185,15 @@ export default function DashboardPage() {
                       </td>
                       <td className="px-4 py-3">
                         <span className="text-[12px] text-[#7a7582]">
-                          {lead.lastContact}
+                          {`${new Date(lead.updatedAt).toLocaleDateString(
+                            "en-IN",
+                          )}, ${new Date(lead.updatedAt).toLocaleTimeString(
+                            "en-IN",
+                            {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            },
+                          )}`}
                         </span>
                       </td>
                     </tr>

@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react'
-import { mockLeads } from '../data/mockData'
+import {useSelector} from 'react-redux'
 
 export function useLeads() {
-  const [leads, setLeads] = useState(mockLeads)
+  const {leads:leadsArray} = useSelector((state) => state.leads)
+  const [leads, setLeads] = useState(leadsArray)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
   const [sourceFilter, setSourceFilter] = useState('All')

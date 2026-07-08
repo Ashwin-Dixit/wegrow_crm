@@ -1,19 +1,13 @@
 import {useEffect} from 'react'
-import { Outlet, useNavigate } from "react-router-dom"
+import { Outlet, Navigate  } from "react-router-dom"
 import { useAuth } from "../../context/AuthProvider"
 const AuthProtected = () => {
-    const {user} = useAuth()
-    const navigate = useNavigate()
-    useEffect(()=>{
-        if(!user){
-            navigate('/login')
-        }
-    }, [user])
+    const {user, loading} = useAuth()
     return (
         <>
-        {user && 
-            <Outlet/>
-        }
+        {loading && <div className="flex justify-center items-center h-screen">Loading...</div>}
+        {!loading && user && <Outlet/>}
+        {!loading && !user && <Navigate to='/login' replace/>}
         </>
     )
 }
