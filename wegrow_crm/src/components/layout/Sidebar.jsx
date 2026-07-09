@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider";
+import WegrowLogo from "../../../public/wegrowfooterlogo.png";
 import {
   LayoutDashboard,
   Users,
@@ -15,14 +16,27 @@ import {
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
-  { to: "/leads", icon: Users, label: "Leads" },
+  {
+    id: "leads",
+    icon: Users,
+    label: "Leads",
+    subItems: [
+      { to: "/leads", label: "All Leads" },
+      { to: "/leads/new", label: "Add Lead" },
+    ],
+  },
   { to: "/clients", icon: UserCheck, label: "Clients" },
-  { to: "/leads/new", icon: PlusCircle, label: "Add Lead" },
 ];
 
 export default function Sidebar({ collapsed, setCollapsed }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const [openDropdowns, setOpenDropdowns] = useState({ leads: false });
+
+  const toggleDropdown = (id) => {
+    setOpenDropdowns((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
   const handleLogout = async () => {
     const data = await logout();
     navigate("/login");
@@ -37,8 +51,8 @@ export default function Sidebar({ collapsed, setCollapsed }) {
     >
       {/* Logo */}
       <div className="flex items-center gap-3 px-5 h-16 border-b border-[#e6e0e9] shrink-0">
-        <div className="w-9 h-9 rounded-xl bg-[#6750a4] flex items-center justify-center shrink-0">
-          <Zap size={18} className="text-white" />
+        <div className="w-24 h-24 rounded-xl flex items-center justify-center shrink-0">
+          <img alt="logo" src={WegrowLogo} />
         </div>
         {!collapsed && (
           <div>
@@ -60,38 +74,95 @@ export default function Sidebar({ collapsed, setCollapsed }) {
           </p>
         )}
 
-        {navItems.map(({ to, icon: Icon, label }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={to === "/"}
-            className={({ isActive }) =>
-              [
-                "flex items-center gap-3 px-3 h-12 rounded-full transition-all duration-200 group",
-                "text-[14px] font-medium",
-                isActive
-                  ? "bg-[#5959ab] text-white"
-                  : "text-[#49454f] hover:bg-[#6750a4]/8 hover:text-[#4f378a]",
-                collapsed ? "justify-center" : "",
-              ].join(" ")
-            }
-            title={collapsed ? label : undefined}
-          >
-            {({ isActive }) => (
-              <>
-                <Icon
-                  size={20}
-                  className={
-                    isActive
-                      ? "text-[#4f378a]"
-                      : "text-[#49454f] group-hover:text-[#4f378a]"
-                  }
-                />
-                {!collapsed && <span>{label}</span>}
-              </>
-            )}
-          </NavLink>
-        ))}
+        {navItems.map((item) => {
+          if (item.subItems) {
+            const isOpen = openDropdowns[item.id];
+            return (
+              <div key={item.id} className="space-y-1">
+                <button
+                  onClick={() => toggleDropdown(item.id)}
+                  className={[
+                    "w-full flex items-center justify-between px-3 h-12 rounded-full transition-all duration-200 group",
+                    "text-[14px] font-medium text-[#49454f] hover:bg-[#6750a4]/8 hover:text-[#4f378a]",
+                    collapsed ? "justify-center" : "",
+                  ].join(" ")}
+                  title={collapsed ? item.label : undefined}
+                >
+                  <div className="flex items-center gap-3">
+                    <item.icon
+                      size={20}
+                      className="text-[#49454f] group-hover:text-[#4f378a]"
+                    />
+                    {!collapsed && <span>{item.label}</span>}
+                  </div>
+                  {!collapsed && (
+                    <ChevronRight
+                      size={16}
+                      className={`text-[#7a7582] transition-transform duration-200 ${
+                        isOpen ? "rotate-90" : ""
+                      }`}
+                    />
+                  )}
+                </button>
+                {isOpen && !collapsed && (
+                  <div className="pl-11 pr-3 space-y-1">
+                    {item.subItems.map((subItem) => (
+                      <NavLink
+                        key={subItem.to}
+                        to={subItem.to}
+                        end={subItem.to === "/leads"}
+                        className={({ isActive }) =>
+                          [
+                            "flex items-center px-4 h-10 rounded-full transition-all duration-200",
+                            "text-[13px] font-medium",
+                            isActive
+                              ? "bg-[#5959ab] text-white"
+                              : "text-[#49454f] hover:bg-[#6750a4]/8 hover:text-[#4f378a]",
+                          ].join(" ")
+                        }
+                      >
+                        {subItem.label}
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          }
+
+          return (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.to === "/"}
+              className={({ isActive }) =>
+                [
+                  "flex items-center gap-3 px-3 h-12 rounded-full transition-all duration-200 group",
+                  "text-[14px] font-medium",
+                  isActive
+                    ? "bg-[#5959ab] text-white"
+                    : "text-[#49454f] hover:bg-[#6750a4]/8 hover:text-[#4f378a]",
+                  collapsed ? "justify-center" : "",
+                ].join(" ")
+              }
+              title={collapsed ? item.label : undefined}
+            >
+              {({ isActive }) => (
+                <>
+                  <item.icon
+                    size={20}
+                    className={
+                      isActive
+                        ? "text-[#4f378a]"
+                        : "text-[#49454f] group-hover:text-[#4f378a]"
+                    }
+                  />
+                  {!collapsed && <span>{item.label}</span>}
+                </>
+              )}
+            </NavLink>
+          );
+        })}
 
         {!collapsed && (
           <p className="text-[10px] font-semibold text-[#7a7582] uppercase tracking-[1px] px-3 mt-6 mb-3">

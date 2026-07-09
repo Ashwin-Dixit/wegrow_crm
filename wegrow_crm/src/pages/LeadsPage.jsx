@@ -22,7 +22,7 @@ export default function LeadsPage() {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-[22px] font-semibold text-[#1d1b20]">Leads Pipeline</h2>
+          <h2 className="text-[22px] font-semibold text-[#1d1b20]">All Leads</h2>
           <p className="text-[13px] text-[#7a7582] mt-0.5">{filteredLeads.length} leads found</p>
         </div>
         <div className="flex gap-2">

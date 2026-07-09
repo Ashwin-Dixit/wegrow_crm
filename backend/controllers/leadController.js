@@ -5,7 +5,7 @@ exports.createLead = async (req, res) => {
   try {
     const { data: employee, error: employeeError } = await supabase
       .from("employees")
-      .select("id")
+      .select("id, full_name, employee_id")
       .eq("auth_user_id", req.user.id)
       .single();
     if (employeeError) {
@@ -34,9 +34,19 @@ exports.createLead = async (req, res) => {
         .status(400)
         .json({ success: false, message: leadError.message });
     }
-    return res
-      .status(201)
-      .json({ success: true, message: "Lead created successfully", lead });
+
+    const newLead = {
+      ...lead,
+      assignedTo: employee.full_name,
+      employeeId: employee.employee_id,
+      createdAt: new Date(lead.created_at),
+      updatedAt: new Date(lead.updated_at),
+    };
+    return res.status(201).json({
+      success: true,
+      message: "Lead created successfully",
+      lead: newLead,
+    });
   } catch (error) {
     console.log("error in creating lead", error);
     return res
@@ -85,13 +95,123 @@ exports.getLeads = async (req, res, next) => {
         updatedAt: new Date(lead.updated_at),
       });
     });
-    return res
-      .status(200)
-      .json({ success: true, message: "Leads fetched successfully", leads: leadsArray });
+    return res.status(200).json({
+      success: true,
+      message: "Leads fetched successfully",
+      leads: leadsArray,
+    });
   } catch (error) {
     console.log("error in fetching leads", error);
     return res
       .status(500)
       .json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+exports.deleteLeadById = async (req, res, next) => {
+  const leadId = req.params.id;
+  if (!leadId) {
+    return res.status(400).json({
+      success: false,
+      message: "Lead ID is required",
+    });
+  }
+  try {
+    const { data: lead, error: leadError } = await supabase
+      .from("leads")
+      .select("id")
+      .eq("id", leadId)
+      .single();
+
+    if (leadError || !lead) {
+      return res.status(404).json({
+        success: false,
+        message: "Lead not found",
+      });
+    }
+    const { error } = await supabase.from("leads").delete().eq("id", leadId);
+
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Lead deleted successfully",
+      leadId,
+    });
+  } catch (error) {
+    console.log("error in deleting lead", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+};
+exports.updateLeadById = async (req, res, next) => {
+  const leadId = req.params.id;
+  const updates = req.body;
+  try {
+    const { data: employee, error: employeeError } = await supabase
+      .from("employees")
+      .select("id, full_name, employee_id")
+      .eq("auth_user_id", req.user.id)
+      .single();
+    if (employeeError) {
+      console.log("error in fetching employee ", employeeError);
+      return res
+        .status(400)
+        .json({ success: false, message: employeeError.message });
+    }
+    
+    const { data: existingLead, error: leadError } = await supabase
+      .from("leads")
+      .select("id")
+      .eq("id", leadId)
+      .single();
+
+    if (leadError || !existingLead) {
+      return res.status(404).json({
+        success: false,
+        message: "Lead not found",
+      });
+    }
+
+    const { data: lead, error: updateError } = await supabase
+      .from("leads")
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", leadId)
+      .select()
+      .single();
+
+    if (updateError) {
+      return res.status(400).json({
+        success: false,
+        message: updateError.message,
+      });
+    }
+    const newLead = {
+      ...lead,
+      assignedTo: employee.full_name,
+      employeeId: employee.employee_id,
+      createdAt: new Date(lead.created_at),
+      updatedAt: new Date(lead.updated_at),
+    };
+    return res.status(200).json({
+      success: true,
+      lead: newLead,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
   }
 };

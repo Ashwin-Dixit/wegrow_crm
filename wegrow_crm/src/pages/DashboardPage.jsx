@@ -67,8 +67,8 @@ export default function DashboardPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           label="Total Leads"
-          value={mockStats.totalLeads}
-          subValue={`+${mockStats.leadsThisMonth} this month`}
+          value={leads.length}
+          subValue={`+${leads.length} this month`}
           trend="up"
           trendLabel="12% vs last month"
           icon={Users}

@@ -7,8 +7,9 @@ import Button from "../components/ui/Button";
 import Card, { CardHeader } from "../components/ui/Card";
 import { LEAD_STATUSES, LEAD_SOURCES, INDUSTRIES } from "../data/mockData";
 import { mockTeamMembers } from "../data/mockData";
-import { addLeadService } from "../services/leadService";
 import { useRef } from "react";
+import { useDispatch } from "react-redux";
+import { addLeadThunk, updateLeadThunk } from "../store/lead/leadThunks";
 
 const EMPTY_FORM = {
   name: "",
@@ -18,8 +19,7 @@ const EMPTY_FORM = {
   status: "New",
   source: "Website",
   industry: "Technology",
-  value: "",
-  assignedTo: "",
+  // value: "",
   notes: "",
 };
 
@@ -28,6 +28,7 @@ export default function AddLeadPage() {
   const [searchParams] = useSearchParams();
   const editId = searchParams.get("edit");
   const { addLead, updateLead, getLeadById } = useLeads();
+  const dispatch = useDispatch()
 
   const existing = editId ? getLeadById(editId) : null;
   const [form, setForm] = useState({
@@ -38,8 +39,7 @@ export default function AddLeadPage() {
     status: "",
     source: "",
     industry: "",
-    value: "",
-    assignedTo: "",
+    // value: "",
     notes: "",
   });
 
@@ -53,20 +53,19 @@ export default function AddLeadPage() {
   const statusRef = useRef("");
   const sourceRef = useRef("");
   const industryRef = useRef("");
-  const valueRef = useRef("");
-  const assignedToRef = useRef("");
+  // const valueRef = useRef("");
   const notesRef = useRef("");
 
-  const validate = () => {
-    const errs = {};
-    if (!form.name.trim()) errs.name = "Name is required";
-    if (!form.company.trim()) errs.company = "Company is required";
-    if (!form.email.trim()) errs.email = "Email is required";
-    if (!form.value || isNaN(Number(form.value)))
-      errs.value = "Enter a valid number";
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
-  };
+  // const validate = () => {
+  //   const errs = {};
+  //   if (!form.name.trim()) errs.name = "Name is required";
+  //   if (!form.company.trim()) errs.company = "Company is required";
+  //   if (!form.email.trim()) errs.email = "Email is required";
+  //   // if (!form.value || isNaN(Number(form.value)))
+  //   //   errs.value = "Enter a valid number";
+  //   setErrors(errs);
+  //   return Object.keys(errs).length === 0;
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -77,8 +76,7 @@ export default function AddLeadPage() {
     const status = statusRef.current.value;
     const source = sourceRef.current.value;
     const industry = industryRef.current.value;
-    const value = valueRef.current.value;
-    const assignedTo = assignedToRef.current.value;
+    // const value = valueRef.current.value;
     const notes = notesRef.current.value;
     setForm({
       name,
@@ -88,20 +86,34 @@ export default function AddLeadPage() {
       status,
       source,
       industry,
-      value,
-      assignedTo,
+      // value,
       notes,
     });
-    if (!validate()) return
+    // if (!validate()) return
     setSaving(true);
-    const data = await addLeadService({
+    if(existing){
+      console.log("dispatching update", notes)
+      await dispatch(updateLeadThunk({leadId: existing.id, updates: {name,
+      company,
+      email,
+      phone,
+      source,
+      status,
+      notes}}))
+      setSaving(false)
+      return navigate(-1)
+    }
+    else{
+      await dispatch(addLeadThunk({
       name,
       company,
       email,
       phone,
       source,
       notes,
-    });
+    }));
+    }
+    
     setSaving(false);
     nameRef.current.value = ''
     companyRef.current.value = ''
@@ -110,8 +122,7 @@ export default function AddLeadPage() {
     statusRef.current.value = ''
     sourceRef.current.value = ''
     industryRef.current.value = ''
-    valueRef.current.value = ''
-    assignedToRef.current.value = ''
+    // valueRef.current.value = ''
     notesRef.current.value = ''
   };
 
@@ -156,6 +167,7 @@ export default function AddLeadPage() {
               label="Full Name"
               placeholder="Ananya Sharma"
               ref={nameRef}
+              defaultValue={existing?.name}
               error={errors.name}
               required
             />
@@ -164,6 +176,7 @@ export default function AddLeadPage() {
               label="Company"
               placeholder="TechNova Solutions"
               ref={companyRef}
+              defaultValue={existing?.company}
               error={errors.company}
               required
             />
@@ -173,6 +186,7 @@ export default function AddLeadPage() {
               type="email"
               placeholder="email@co.in"
               ref={emailRef}
+              defaultValue={existing?.email}
               error={errors.email}
               required
             />
@@ -181,6 +195,7 @@ export default function AddLeadPage() {
               label="Phone Number"
               placeholder="+91 98765 43210"
               ref={phoneRef}
+              defaultValue={existing?.phone}
             />
           </div>
         </Card>
@@ -194,12 +209,14 @@ export default function AddLeadPage() {
               label="Status"
               options={statusOpts}
               ref={statusRef}
+              defaultValue={existing?.status}
               required
             />
             <Select
               id="source"
               label="Source"
               options={sourceOpts}
+              defaultValue={existing?.source}
               ref={sourceRef}
               required
             />
@@ -208,24 +225,19 @@ export default function AddLeadPage() {
               label="Industry"
               options={industryOpts}
               ref={industryRef}
+              defaultValue={existing?.industry}
               required
             />
-            <Input
+            {/* <Input
               id="value"
               label="Deal Value (₹)"
               type="number"
               placeholder="500000"
               ref={valueRef}
               error={errors.value}
+              defaultValue={existing?.value}
               required
-            />
-            <Select
-              id="assignedTo"
-              label="Assigned To"
-              options={assigneeOpts}
-              ref={assignedToRef}
-              wrapperClassName="sm:col-span-2"
-            />
+            /> */}
           </div>
         </Card>
 
@@ -240,6 +252,7 @@ export default function AddLeadPage() {
             placeholder="Add any notes about this lead..."
             rows={4}
             ref={notesRef}
+            defaultValue={existing?.notes}
           />
         </Card>
 

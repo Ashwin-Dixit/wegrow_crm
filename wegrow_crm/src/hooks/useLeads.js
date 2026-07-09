@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react'
-import {useSelector} from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux'
+import {deleteLeadThunk, updateLeadThunk} from '../store/lead/leadThunks'
 
 export function useLeads() {
-  const {leads:leadsArray} = useSelector((state) => state.leads)
-  const [leads, setLeads] = useState(leadsArray)
+  const {leads} = useSelector((state) => state.leads)
+  const dispatch = useDispatch()
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
   const [sourceFilter, setSourceFilter] = useState('All')
@@ -22,27 +23,28 @@ export function useLeads() {
 
   const getLeadById = (id) => leads.find((l) => l.id === id)
 
-  const addLead = (newLead) => {
-    const lead = {
-      ...newLead,
-      id: `L${String(leads.length + 1).padStart(3, '0')}`,
-      createdAt: new Date().toISOString().split('T')[0],
-      lastContact: new Date().toISOString().split('T')[0],
-    }
-    setLeads((prev) => [lead, ...prev])
-    return lead
-  }
+  // const addLead = (newLead) => {
+  //   const lead = {
+  //     ...newLead,
+  //     id: `L${String(leads.length + 1).padStart(3, '0')}`,
+  //     createdAt: new Date().toISOString().split('T')[0],
+  //     lastContact: new Date().toISOString().split('T')[0],
+  //   }
+  //   setLeads((prev) => [lead, ...prev])
+  //   return lead
+  // }
 
-  const updateLead = (id, updates) => {
-    setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, ...updates } : l)))
-  }
+  // const updateLead = (id, updates) => {
+  //   setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, ...updates } : l)))
+  // }
 
   const deleteLead = (id) => {
-    setLeads((prev) => prev.filter((l) => l.id !== id))
+    dispatch(deleteLeadThunk(id))
   }
 
-  const updateLeadStatus = (id, status) => {
-    updateLead(id, { status, lastContact: new Date().toISOString().split('T')[0] })
+  const updateLeadStatus = async (id, status) => {
+    await dispatch(updateLeadThunk({leadId: id, updates: {status}}))
+    console.log(leads.find((lead)=>lead.id === id))
   }
 
   return {
@@ -55,8 +57,8 @@ export function useLeads() {
     sourceFilter,
     setSourceFilter,
     getLeadById,
-    addLead,
-    updateLead,
+    // addLead,
+    // updateLead,
     deleteLead,
     updateLeadStatus,
   }
