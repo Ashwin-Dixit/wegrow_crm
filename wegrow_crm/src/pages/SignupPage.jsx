@@ -25,8 +25,8 @@ export default function SignupPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#6750a4] shadow-lg mb-4">
-            <Zap size={28} className="text-white" />
+          <div className="inline-flex items-center justify-center mb-4">
+            <img alt="logo" src="/wegrowfooterlogo.png" className="w-30 h-30 object-contain" />
           </div>
           <h1 className="text-[32px] font-bold text-[#1d1b20] tracking-tight">WeGrow CRM</h1>
           <p className="text-[14px] text-[#7a7582] mt-1">Sign in to your workspace</p>

@@ -14,6 +14,7 @@ import {
   Edit2,
   Trash2,
   CheckCircle,
+  UserPlus,
 } from "lucide-react";
 import { useLeads } from "../hooks/useLeads";
 import Badge from "../components/ui/Badge";
@@ -80,6 +81,13 @@ export default function LeadDetailPage() {
     navigate("/leads");
   };
 
+  const handleConvertToClient = async () => {
+    setUpdatingStatus(true)
+    //await dispatch(convertToClientThunk(leadId))
+    setUpdatingStatus(false)
+    navigate("/clients")
+  };
+
   return (
     <div className="space-y-6 max-w-4xl">
       {/* Back + Actions */}
@@ -92,6 +100,15 @@ export default function LeadDetailPage() {
           Back to Leads
         </button>
         <div className="flex gap-2">
+          <Button
+            variant="tonal"
+            size="sm"
+            icon={<UserPlus size={14} />}
+            onClick={handleConvertToClient}
+            className="bg-green-100 text-green-800 hover:bg-green-200 hover:text-green-900"
+          >
+            Convert to Client
+          </Button>
           <Button
             variant="outlined"
             size="sm"
