@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react'
-import { Outlet } from 'react-router-dom'
-import {useDispatch} from 'react-redux'
-import { fetchLeads } from '../../store/lead/leadThunks'
-import Sidebar from './Sidebar'
-import TopBar from './TopBar'
+import React, { useState, useEffect } from "react";
+import { Outlet } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { fetchLeads } from "../../store/lead/leadThunks";
+import { fetchClients } from "../../store/client/clientThunks";
+import Sidebar from "./Sidebar";
+import TopBar from "./TopBar";
 
 export default function AppLayout() {
-  const [collapsed, setCollapsed] = useState(false)
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const dispatch = useDispatch()
   useEffect(()=>{
     dispatch(fetchLeads())
+    dispatch(fetchClients())
   }, [])
 
   return (

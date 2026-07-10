@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider";
-import WegrowLogo from "../../../public/wegrowfooterlogo.png";
 import {
   LayoutDashboard,
   Users,
@@ -52,7 +51,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
       {/* Logo */}
       <div className="flex items-center gap-3 px-5 h-16 border-b border-[#e6e0e9] shrink-0">
         <div className="w-24 h-24 rounded-xl flex items-center justify-center shrink-0">
-          <img alt="logo" src={WegrowLogo} />
+          <img alt="logo" src="/wegrowfooterlogo.png" />
         </div>
         {!collapsed && (
           <div>

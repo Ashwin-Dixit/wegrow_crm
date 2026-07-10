@@ -40,7 +40,7 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { leads } = useSelector((state) => state.leads);
-  const recentLeads = leads.slice(0, 5);
+  const recentLeads = leads?.slice(0, 5) || [];
 
   return (
     <div className="space-y-6">
