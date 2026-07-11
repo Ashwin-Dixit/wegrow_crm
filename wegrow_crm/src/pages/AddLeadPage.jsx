@@ -6,7 +6,6 @@ import Input, { Select, Textarea } from "../components/ui/Input";
 import Button from "../components/ui/Button";
 import Card, { CardHeader } from "../components/ui/Card";
 import { LEAD_STATUSES, LEAD_SOURCES, INDUSTRIES } from "../data/mockData";
-import { mockTeamMembers } from "../data/mockData";
 import { useRef } from "react";
 import { useDispatch } from "react-redux";
 import { addLeadThunk, updateLeadThunk } from "../store/lead/leadThunks";
@@ -129,10 +128,6 @@ export default function AddLeadPage() {
   const statusOpts = LEAD_STATUSES.map((s) => ({ value: s, label: s }));
   const sourceOpts = LEAD_SOURCES.map((s) => ({ value: s, label: s }));
   const industryOpts = INDUSTRIES.map((i) => ({ value: i, label: i }));
-  const assigneeOpts = [
-    { value: "", label: "Unassigned" },
-    ...mockTeamMembers.map((m) => ({ value: m.name, label: m.name })),
-  ];
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -284,10 +279,3 @@ export default function AddLeadPage() {
   );
 }
 
-// existing ? {
-//     name: existing.name, company: existing.company,
-//     email: existing.email, phone: existing.phone,
-//     status: existing.status, source: existing.source,
-//     industry: existing.industry, value: String(existing.value),
-//     assignedTo: existing.assignedTo, notes: existing.notes,
-//   } : EMPTY_FORM

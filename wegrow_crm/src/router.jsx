@@ -4,7 +4,8 @@ import {
   RouterProvider,
   Navigate,
 } from "react-router-dom";
-import {Provider} from "react-redux"
+import { Toaster } from "react-hot-toast"
+import { Provider } from "react-redux"
 import AppLayout from "./components/layout/AppLayout";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
@@ -60,6 +61,7 @@ export default function AppRouter() {
     <>
       <AuthProvider>
         <Provider store={store}>
+          <Toaster position="top-center" reverseOrder={false} />
           <RouterProvider router={router} />
         </Provider>
       </AuthProvider>

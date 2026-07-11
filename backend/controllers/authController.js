@@ -40,11 +40,24 @@ exports.signup = async (req, res) => {
         message: "Please fill all the required fields",
       });
     }
+    const { data: existingUser, error: existingUserError } = await supabase
+      .from("employees")
+      .select("*")
+      .or(`email.eq.${email},employee_id.eq.${employeeId}`)
+    if (existingUser.length > 0) {
+      console.log(existingUser)
+      return res.status(400).json({
+        success: false,
+        message: "Email or employee ID already exists",
+      });
+    }
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
+    console.log(data)
     if (error) {
+      console.log(error)
       return res.status(400).json({
         success: false,
         message: error.message,
@@ -58,6 +71,7 @@ exports.signup = async (req, res) => {
       employee_id: employeeId,
     });
     if (employeeError) {
+      console.log(employeeError)
       await supabase.auth.admin.deleteUser(authUserId);
       return res.status(400).json({
         success: false,
@@ -96,7 +110,7 @@ exports.login = async (req, res) => {
       console.log("error in signin", error);
       return res.status(400).json({
         success: false,
-        message: "Invalid Credentials",
+        message: error.message,
       });
     }
     res.cookie("access_token", signinData.session.access_token, {

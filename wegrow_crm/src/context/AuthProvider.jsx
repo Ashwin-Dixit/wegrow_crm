@@ -22,21 +22,39 @@ const  AuthProvider = ({children}) => {
     }, [])
 
     const signup = async ({fullname, email, employeeId, password}) => {
+        try{
         const data = await signupService({fullname, email, employeeId, password})
         setUser(data.user)
         return data
+        }catch(error){
+            console.log(error)
+            setUser(null)
+            throw error
+        }
     }
 
     const login = async ({email, password}) => {
+        try{
         const data = await loginService({email, password})
         setUser(data.user)
         return data
+        }catch(error){
+            console.log(error)
+            setUser(null)
+            throw error
+        }
     }
 
     const logout = async () => {
+        try{
         const data = await logoutService()
         setUser(null)
         return data
+        }catch(error){
+            console.log(error)
+            setUser(null)
+            throw error
+        }
     }
     return(
         <authContext.Provider value={{signup, login, logout, user, loading}}>

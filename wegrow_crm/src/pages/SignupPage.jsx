@@ -4,6 +4,7 @@ import { Zap, Eye, EyeOff, Lock, Mail, User, Hash } from 'lucide-react'
 import Input from '../components/ui/Input'
 import Button from '../components/ui/Button'
 import {useAuth} from '../context/AuthProvider'
+import { toast } from 'react-hot-toast'
 
 export default function SignupPage() {
   const navigate = useNavigate()
@@ -15,9 +16,15 @@ export default function SignupPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    const data = await signup(form)
-    setLoading(false)
-    navigate('/login')
+    try{
+      const data = await signup(form)
+      toast.success(data.message)
+      navigate('/login')
+    }catch(error){
+      toast.error(error.message)
+    }finally{
+      setLoading(false)
+    }
   }
 
   return (
