@@ -12,7 +12,7 @@ exports.getProjects = async (req, res, next) => {
       console.log("error in fetching projects", projectsError);
       return res
         .status(400)
-        .json({ success: false, message: projectsError.message });
+        .json({ success: false, message: `Error in fetching projects! ${projectsError.message}` });
     }
     return res.status(200).json({
       success: true,

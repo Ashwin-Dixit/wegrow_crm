@@ -12,7 +12,7 @@ exports.createLead = async (req, res) => {
       console.log("error in fetching employee ", employeeError);
       return res
         .status(400)
-        .json({ success: false, message: employeeError.message });
+        .json({ success: false, message: `Error in creating lead! ${employeeError.message}` });
     }
     console.log(employee);
     const { data: lead, error: leadError } = await supabase
@@ -32,7 +32,7 @@ exports.createLead = async (req, res) => {
       console.log("error in creating lead", leadError);
       return res
         .status(400)
-        .json({ success: false, message: leadError.message });
+        .json({ success: false, message: `Error in creating lead! ${leadError.message}` });
     }
 
     const newLead = {
@@ -65,7 +65,7 @@ exports.getLeads = async (req, res, next) => {
       console.log("error in fetching employee", employeeError);
       return res
         .status(400)
-        .json({ success: false, message: employeeError.message });
+        .json({ success: false, message: "Error in fetching leads!" });
     }
     const { data: leads, error: leadsError } = await supabase
       .from("leads")
@@ -76,7 +76,7 @@ exports.getLeads = async (req, res, next) => {
       console.log("error in fetching leads", leadsError);
       return res
         .status(400)
-        .json({ success: false, message: leadsError.message });
+        .json({ success: false, message: `Error in fetching leads! ${leadsError.message}` });
     }
     const leadsArray = [];
     leads.forEach((lead) => {
@@ -134,7 +134,7 @@ exports.deleteLeadById = async (req, res, next) => {
     if (error) {
       return res.status(400).json({
         success: false,
-        message: error.message,
+        message: `Error in deleting lead! ${error.message}`,
       });
     }
 
@@ -163,7 +163,7 @@ exports.updateLeadById = async (req, res, next) => {
       console.log("error in fetching employee ", employeeError);
       return res
         .status(400)
-        .json({ success: false, message: employeeError.message });
+        .json({ success: false, message: "Could not update lead try again later!" });
     }
     
     const { data: existingLead, error: leadError } = await supabase
@@ -192,7 +192,7 @@ exports.updateLeadById = async (req, res, next) => {
     if (updateError) {
       return res.status(400).json({
         success: false,
-        message: updateError.message,
+        message: `Error in updating lead! ${updateError.message}`,
       });
     }
     const newLead = {
@@ -204,10 +204,11 @@ exports.updateLeadById = async (req, res, next) => {
     };
     return res.status(200).json({
       success: true,
+      message: "Lead updated successfully",
       lead: newLead,
     });
   } catch (error) {
-    console.error(error);
+    console.log("error in updating lead", error);
 
     return res.status(500).json({
       success: false,

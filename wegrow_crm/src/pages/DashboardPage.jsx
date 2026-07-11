@@ -42,6 +42,7 @@ export default function DashboardPage() {
   const { leads } = useSelector((state) => state.leads);
   const {clients} = useSelector((state)=>state.clients)
   const recentLeads = leads?.slice(0, 5) || [];
+  // const recentLeads = [];
 
   return (
     <div className="space-y-6">
@@ -143,6 +144,7 @@ export default function DashboardPage() {
                     ))}
                   </tr>
                 </thead>
+                {recentLeads.length===0 && <p>No leads</p>}
                 <tbody>
                   {recentLeads.map((lead) => (
                     <tr

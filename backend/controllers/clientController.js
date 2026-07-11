@@ -10,7 +10,7 @@ exports.getClients = async (req, res, next) => {
       console.log("error in fetching employee", employeeError);
       return res
         .status(400)
-        .json({ success: false, message: employeeError.message });
+        .json({ success: false, message: "Could not fetch clients details, try again later!" });
     }
     const { data: clients, error: clientsError } = await supabase
       .from("clients")
@@ -21,7 +21,7 @@ exports.getClients = async (req, res, next) => {
       console.log("error in fetching clients", clientsError);
       return res
         .status(400)
-        .json({ success: false, message: clientsError.message });
+        .json({ success: false, message: `Error in fetching clients! ${clientsError.message}` });
     }
     const clientsArray = [];
     clients.forEach((client) => {
@@ -77,7 +77,7 @@ exports.createClient = async (req, res, next) => {
       console.log("error in fetching employee", employeeError);
       return res
         .status(400)
-        .json({ success: false, message: employeeError.message });
+        .json({ success: false, message: "Could not create client try again later" });
     }
     const { data: client, error: clientError } = await supabase
       .from("clients")
@@ -99,7 +99,7 @@ exports.createClient = async (req, res, next) => {
       console.log("error in creating client", clientError);
       return res
         .status(400)
-        .json({ success: false, message: clientError.message });
+        .json({ success: false, message: `Error in creating client, try again later! ${clientError.message}`});
     }
     return res.status(200).json({
       success: true,

@@ -18,6 +18,7 @@ exports.authme = async (req, res) => {
       user: {
         fullname: employee.full_name,
         email: employee.email,
+        employeeId: employee.employee_id,
         role: employee.role,
       },
     });
@@ -57,9 +58,10 @@ exports.signup = async (req, res) => {
       employee_id: employeeId,
     });
     if (employeeError) {
+      await supabase.auth.admin.deleteUser(authUserId);
       return res.status(400).json({
         success: false,
-        message: employeeError.message,
+        message: "Failed to create employee, Try again later",
       });
     }
     return res.status(201).json({
@@ -94,13 +96,13 @@ exports.login = async (req, res) => {
       console.log("error in signin", error);
       return res.status(400).json({
         success: false,
-        message: error.message,
+        message: "Invalid Credentials",
       });
     }
     res.cookie("access_token", signinData.session.access_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 60 * 60 * 1000, // 1 hour
     });
     const { data: employee, error: employeeError } = await supabase
@@ -112,7 +114,7 @@ exports.login = async (req, res) => {
       console.log("error in employee fetch", employeeError);
       return res.status(400).json({
         success: false,
-        message: employeeError.message,
+        message: "Could not fetch employee details!",
       });
     }
     return res.status(200).json({
