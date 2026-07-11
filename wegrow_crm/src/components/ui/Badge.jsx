@@ -1,26 +1,26 @@
 import React from 'react'
 
 const STATUS_STYLES = {
-  New:        'bg-[#e8def9] text-[#4f378a]',
-  Contacted:  'bg-[#dce2f7] text-[#002f62]',
-  Qualified:  'bg-[#c2e7d0] text-[#00531b]',
-  Proposal:   'bg-[#ffefd6] text-[#7a3a00]',
-  Won:        'bg-[#c2e7d0] text-[#00531b]',
-  Lost:       'bg-[#ffdad6] text-[#93000a]',
-  Active:     'bg-[#c2e7d0] text-[#00531b]',
-  'Renewal Due': 'bg-[#ffefd6] text-[#7a3a00]',
-  Inactive:   'bg-[#e6e0e9] text-[#49454f]',
+  new:        'bg-[#e8def9] text-[#4f378a]',
+  contacted:  'bg-[#dce2f7] text-[#002f62]',
+  qualified:  'bg-[#c2e7d0] text-[#00531b]',
+  proposal:   'bg-[#ffefd6] text-[#7a3a00]',
+  won:        'bg-[#c2e7d0] text-[#00531b]',
+  lost:       'bg-[#ffdad6] text-[#93000a]',
+  active:     'bg-[#c2e7d0] text-[#00531b]',
+  'renewal due': 'bg-[#ffefd6] text-[#7a3a00]',
+  inactive:   'bg-[#e6e0e9] text-[#49454f]',
 }
 
 const DOTS = {
-  Won:    'bg-[#00531b]',
-  Active: 'bg-[#00531b]',
-  Lost:   'bg-[#93000a]',
+  won:    'bg-[#00531b]',
+  active: 'bg-[#00531b]',
+  lost:   'bg-[#93000a]',
 }
 
 export default function Badge({ label, showDot = false, className = '' }) {
-  const style = STATUS_STYLES[label] ?? 'bg-[#e6e0e9] text-[#49454f]'
-  const dotColor = DOTS[label] ?? ''
+  const style = STATUS_STYLES[label.toLowerCase()] ?? 'bg-[#e6e0e9] text-[#49454f]'
+  const dotColor = DOTS[label.toLowerCase()] ?? ''
 
   return (
     <span

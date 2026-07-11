@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteLeadThunk } from "../store/lead/leadThunks";
+import {createClientThunk} from "../store/client/clientThunks";
 import {
   ArrowLeft,
   Phone,
@@ -52,8 +53,12 @@ export default function LeadDetailPage() {
   const { getLeadById, updateLeadStatus, deleteLead } = useLeads();
   const [deleteModal, setDeleteModal] = useState(false);
   const [statusModal, setStatusModal] = useState(false);
+  const [convertToClientModal, setConvertToClientModal] = useState(false);
   const [deleting, setDeleting] = useState(false)
   const [updatingStatus, setUpdatingStatus] = useState(false)
+  const [contractStartDate, setContractStartDate] = useState("");
+  const [contractEndDate, setContractEndDate] = useState("");
+  const [contractValue, setContractValue] = useState("");
 
   const lead = getLeadById(id);
 
@@ -83,7 +88,21 @@ export default function LeadDetailPage() {
 
   const handleConvertToClient = async () => {
     setUpdatingStatus(true)
-    //await dispatch(convertToClientThunk(leadId))
+    const {name, company, email, phone, notes} = lead
+    const clientData = {
+      name: name,
+      email:email,
+      phone:phone,
+      company: company,
+      status: "active",
+      notes: notes,
+      contractStart: contractStartDate,
+      contractEnd: contractEndDate,
+      contractValue: contractValue,
+    }
+    console.log(clientData)
+    await dispatch(createClientThunk(clientData))
+    await dispatch(deleteLeadThunk(id))
     setUpdatingStatus(false)
     navigate("/clients")
   };
@@ -104,7 +123,7 @@ export default function LeadDetailPage() {
             variant="tonal"
             size="sm"
             icon={<UserPlus size={14} />}
-            onClick={handleConvertToClient}
+            onClick={() => setConvertToClientModal(true)}
             className="bg-green-100 text-green-800 hover:bg-green-200 hover:text-green-900"
           >
             Convert to Client
@@ -336,6 +355,64 @@ export default function LeadDetailPage() {
           Are you sure you want to delete <strong>{lead.name}</strong> from{" "}
           {lead.company}? This action cannot be undone.
         </p>
+      </Modal>
+      <Modal
+        isOpen={convertToClientModal}
+        onClose={() => setConvertToClientModal(false)}
+        title={updatingStatus? "updating":"Convert to Client"}
+        size="sm"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setConvertToClientModal(false)}>
+              Cancel
+            </Button>
+            <Button 
+              variant="tonal" 
+              onClick={handleConvertToClient} 
+              disabled={updatingStatus}
+              className="bg-[#c2e7d0] text-[#146c2e] hover:bg-[#a6d9b9]"
+            >
+              {updatingStatus ? "Converting..." : "Convert"}
+            </Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          <div>
+            <label className="block text-[12px] font-medium text-[#7a7582] uppercase tracking-[0.5px] mb-1.5">
+              Contract Start Date
+            </label>
+            <input
+              type="date"
+              value={contractStartDate}
+              onChange={(e) => setContractStartDate(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl text-[14px] bg-[#f2ecf4] text-[#1d1b20] outline-none focus:ring-2 focus:ring-[#6750a4] transition-all"
+            />
+          </div>
+          <div>
+            <label className="block text-[12px] font-medium text-[#7a7582] uppercase tracking-[0.5px] mb-1.5">
+              Contract End Date
+            </label>
+            <input
+              type="date"
+              value={contractEndDate}
+              onChange={(e) => setContractEndDate(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl text-[14px] bg-[#f2ecf4] text-[#1d1b20] outline-none focus:ring-2 focus:ring-[#6750a4] transition-all"
+            />
+          </div>
+          <div>
+            <label className="block text-[12px] font-medium text-[#7a7582] uppercase tracking-[0.5px] mb-1.5">
+              Contract Value
+            </label>
+            <input
+              type="number"
+              value={contractValue}
+              onChange={(e) => setContractValue(e.target.value)}
+              placeholder="e.g. 50000"
+              className="w-full px-4 py-3 rounded-xl text-[14px] bg-[#f2ecf4] text-[#1d1b20] placeholder-[#7a7582] outline-none focus:ring-2 focus:ring-[#6750a4] transition-all"
+            />
+          </div>
+        </div>
       </Modal>
     </div>
   );

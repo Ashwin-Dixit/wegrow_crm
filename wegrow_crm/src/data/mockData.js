@@ -163,6 +163,27 @@ export const mockClients = [
     status: "Active",
     totalRevenue: 920000,
     notes: "Flagship education client. Full suite deployment.",
+    projects: [
+      {
+        id: "P1",
+        name: "LMS Integration",
+        status: "In Progress",
+        tasks: [
+          { id: "T1", title: "Setup Database", status: "Completed" },
+          { id: "T2", title: "API Development", status: "In Progress" },
+          { id: "T3", title: "Frontend Dashboard", status: "Pending" }
+        ]
+      },
+      {
+        id: "P2",
+        name: "Mobile App Rollout",
+        status: "Pending",
+        tasks: [
+          { id: "T4", title: "Requirement Gathering", status: "In Progress" },
+          { id: "T5", title: "UI/UX Design", status: "Pending" }
+        ]
+      }
+    ]
   },
   {
     id: "C002",
@@ -178,6 +199,17 @@ export const mockClients = [
     status: "Active",
     totalRevenue: 1440000,
     notes: "Renewed for a second year. Expansion discussion ongoing.",
+    projects: [
+      {
+        id: "P3",
+        name: "Patient Portal V2",
+        status: "In Progress",
+        tasks: [
+          { id: "T6", title: "Security Audit", status: "Completed" },
+          { id: "T7", title: "Feature Development", status: "In Progress" }
+        ]
+      }
+    ]
   },
   {
     id: "C003",
@@ -193,6 +225,17 @@ export const mockClients = [
     status: "Renewal Due",
     totalRevenue: 540000,
     notes: "Contract expiring soon. Renewal call to be scheduled.",
+    projects: [
+      {
+        id: "P4",
+        name: "Cloud Migration",
+        status: "Completed",
+        tasks: [
+          { id: "T8", title: "AWS Setup", status: "Completed" },
+          { id: "T9", title: "Data Transfer", status: "Completed" }
+        ]
+      }
+    ]
   },
 ];
 

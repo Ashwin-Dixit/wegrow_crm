@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -10,12 +10,16 @@ import {
   IndianRupee,
   FileText,
   RefreshCw,
+  Folder,
 } from "lucide-react";
 import { useClients } from "../hooks/useClients";
 import Badge from "../components/ui/Badge";
 import Avatar from "../components/ui/Avatar";
 import Button from "../components/ui/Button";
 import Card, { CardHeader } from "../components/ui/Card";
+import Projects from "../components/clients/Projects";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProjects } from "../store/project/projectThunk";
 // val.toLocaleString('en-IN')
 function formatCurrency(val) {
   return `₹${val}`;
@@ -39,6 +43,22 @@ function InfoRow({ icon: Icon, label, value }) {
 
 export default function ClientDetailPage() {
   const { id } = useParams();
+  const dispatch = useDispatch()
+  const {projects} = useSelector((state)=>state.projects)
+  const [fetchingProjects, setFetchingProjects] = useState(false)
+  useEffect(()=>{
+    async function getProjects(){
+      setFetchingProjects(true)
+      try{
+        await dispatch(fetchProjects(id))
+      } catch(error){
+        console.log(error)
+      } finally{
+        setFetchingProjects(false)
+      }
+    }
+    getProjects()
+  },[dispatch,id])
   const navigate = useNavigate();
   const { getClientById } = useClients();
 
@@ -66,16 +86,33 @@ export default function ClientDetailPage() {
     return Math.round((end - start) / (1000 * 60 * 60 * 24 * 30));
   })();
 
-  const monthsLeft = (() => {
+  const timeLeft = (() => {
     const now = new Date();
     const end = new Date(client.contractEnd);
-    const diff = Math.round((end - now) / (1000 * 60 * 60 * 24 * 30));
-    return Math.max(0, diff);
+    const diffMs = end - now;
+    if (diffMs <= 0) return "0 days";
+
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const months = Math.floor(diffDays / 30);
+    const days = diffDays % 30;
+
+    if (months > 0 && days > 0) {
+      return `${months} month${months > 1 ? "s" : ""} and ${days} day${days !== 1 ? "s" : ""}`;
+    } else if (months > 0) {
+      return `${months} month${months > 1 ? "s" : ""}`;
+    } else {
+      return `${days} day${days !== 1 ? "s" : ""}`;
+    }
   })();
 
   const progressPct = Math.min(
     100,
-    Math.round(((totalMonths - monthsLeft) / totalMonths) * 100),
+    Math.round(
+      ((Math.max(new Date(), new Date(client.contractStart)) -
+        new Date(client.contractStart)) /
+        (new Date(client.contractEnd) - new Date(client.contractStart))) *
+        100,
+    ),
   );
 
   return (
@@ -146,9 +183,7 @@ export default function ClientDetailPage() {
             <p className="text-[12px] font-semibold text-[#7a7582] uppercase tracking-[0.5px]">
               Contract Progress
             </p>
-            <p className="text-[12px] text-[#7a7582]">
-              {monthsLeft} months remaining
-            </p>
+            <p className="text-[12px] text-[#7a7582]">{timeLeft} Left</p>
           </div>
           <div className="h-2 bg-[#e6e0e9] rounded-full overflow-hidden">
             <div
@@ -270,6 +305,18 @@ export default function ClientDetailPage() {
           </div>
         </Card>
       </div>
+
+      {/* Projects */}
+      {/* {client.projects && client.projects.length > 0 && ( */}
+      <CardHeader title="Projects" icon={<Folder size={16} />} />
+      {fetchingProjects && <div className="w-full flex justify-center items-center">
+        fetching projects...
+      </div>}
+      {!fetchingProjects && projects?.length > 0 ? (
+        <Projects projects={projects} />
+      ) : (
+        <div>no projects</div>
+      )}
 
       {/* Notes */}
       <Card elevation={1}>

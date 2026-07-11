@@ -1,35 +1,73 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Search, Plus, Download } from 'lucide-react'
-import { useLeads } from '../hooks/useLeads'
-import LeadRow from '../components/leads/LeadRow'
-import LeadFilters from '../components/leads/LeadFilters'
-import Button from '../components/ui/Button'
-import Input from '../components/ui/Input'
-import Card from '../components/ui/Card'
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Search, Plus, Download } from "lucide-react";
+import * as XLSX from "xlsx";
+import { useLeads } from "../hooks/useLeads";
+import LeadRow from "../components/leads/LeadRow";
+import LeadFilters from "../components/leads/LeadFilters";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
+import Card from "../components/ui/Card";
 
 export default function LeadsPage() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const {
     filteredLeads,
-    searchQuery, setSearchQuery,
-    statusFilter, setStatusFilter,
-    sourceFilter, setSourceFilter,
-  } = useLeads()
+    searchQuery,
+    setSearchQuery,
+    statusFilter,
+    setStatusFilter,
+    sourceFilter,
+    setSourceFilter,
+  } = useLeads();
+  const exportLeads = () => {
+    console.log(filteredLeads);
+    const toExportLeads = filteredLeads.map((l) => {
+      return {
+        Name: l.name,
+        Company: l.company,
+        Email: l.email,
+        Phone: l.phone,
+        Status: l.status,
+        Source: l.source,
+        Assigned: l.assignedTo,
+        Notes: l.notes,
+        Created: new Date(l.createdAt).toLocaleDateString(),
+      };
+    });
+    const worksheet = XLSX.utils.json_to_sheet(toExportLeads);
+
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Leads");
+
+    XLSX.writeFile(workbook, "leads.xlsx");
+  };
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-[22px] font-semibold text-[#1d1b20]">All Leads</h2>
-          <p className="text-[13px] text-[#7a7582] mt-0.5">{filteredLeads.length} leads found</p>
+          <h2 className="text-[22px] font-semibold text-[#1d1b20]">
+            All Leads
+          </h2>
+          <p className="text-[13px] text-[#7a7582] mt-0.5">
+            {filteredLeads.length} leads found
+          </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outlined" size="md" icon={<Download size={16} />}>
+          <Button variant="outlined" size="md" icon={<Download size={16} />}
+            onClick={exportLeads}
+          >
             Export
           </Button>
-          <Button variant="filled" size="md" icon={<Plus size={16} />} onClick={() => navigate('/leads/new')}>
+          <Button
+            variant="filled"
+            size="md"
+            icon={<Plus size={16} />}
+            onClick={() => navigate("/leads/new")}
+          >
             Add Lead
           </Button>
         </div>
@@ -60,7 +98,15 @@ export default function LeadsPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-[#e6e0e9] bg-[#f2ecf4]">
-                {['Lead', 'Status', 'Source', 'Value', 'Assigned To', 'Last Contact', ''].map((h) => (
+                {[
+                  "Lead",
+                  "Status",
+                  "Source",
+                  "Value",
+                  "Assigned To",
+                  "Last Contact",
+                  "",
+                ].map((h) => (
                   <th
                     key={h}
                     className="px-4 py-3 text-left text-[11px] font-semibold text-[#7a7582] uppercase tracking-[0.5px] whitespace-nowrap first:rounded-tl-2xl"
@@ -72,7 +118,9 @@ export default function LeadsPage() {
             </thead>
             <tbody>
               {filteredLeads.length > 0 ? (
-                filteredLeads.map((lead) => <LeadRow key={lead.id} lead={lead} />)
+                filteredLeads.map((lead) => (
+                  <LeadRow key={lead.id} lead={lead} />
+                ))
               ) : (
                 <tr>
                   <td colSpan={7} className="px-4 py-16 text-center">
@@ -80,9 +128,21 @@ export default function LeadsPage() {
                       <div className="w-16 h-16 rounded-full bg-[#e8def9] flex items-center justify-center">
                         <Search size={24} className="text-[#6750a4]" />
                       </div>
-                      <p className="text-[15px] font-medium text-[#1d1b20]">No leads found</p>
-                      <p className="text-[13px] text-[#7a7582]">Try adjusting your search or filters</p>
-                      <Button variant="tonal" size="sm" onClick={() => { setSearchQuery(''); setStatusFilter('All'); setSourceFilter('All') }}>
+                      <p className="text-[15px] font-medium text-[#1d1b20]">
+                        No leads found
+                      </p>
+                      <p className="text-[13px] text-[#7a7582]">
+                        Try adjusting your search or filters
+                      </p>
+                      <Button
+                        variant="tonal"
+                        size="sm"
+                        onClick={() => {
+                          setSearchQuery("");
+                          setStatusFilter("All");
+                          setSourceFilter("All");
+                        }}
+                      >
                         Clear filters
                       </Button>
                     </div>
@@ -96,13 +156,18 @@ export default function LeadsPage() {
         {/* Footer */}
         {filteredLeads.length > 0 && (
           <div className="px-4 py-3 border-t border-[#e6e0e9] flex items-center justify-between">
-            <p className="text-[12px] text-[#7a7582]">Showing {filteredLeads.length} leads</p>
             <p className="text-[12px] text-[#7a7582]">
-              Total value: ₹{filteredLeads.reduce((s, l) => s + l.value, 0).toLocaleString('en-IN')}
+              Showing {filteredLeads.length} leads
+            </p>
+            <p className="text-[12px] text-[#7a7582]">
+              Total value: ₹
+              {filteredLeads
+                .reduce((s, l) => s + l.value, 0)
+                .toLocaleString("en-IN")}
             </p>
           </div>
         )}
       </Card>
     </div>
-  )
+  );
 }

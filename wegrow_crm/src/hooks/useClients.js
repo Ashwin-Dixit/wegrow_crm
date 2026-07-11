@@ -13,7 +13,7 @@ export function useClients() {
         client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         client.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
         client.email.toLowerCase().includes(searchQuery.toLowerCase())
-      const matchesStatus = statusFilter === 'All' || client.status === statusFilter
+      const matchesStatus = statusFilter === 'All' || client.status.toLowerCase() === statusFilter.toLowerCase()
       return matchesSearch && matchesStatus
     })
   }, [clients, searchQuery, statusFilter])

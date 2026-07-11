@@ -100,7 +100,7 @@ exports.login = async (req, res) => {
     res.cookie("access_token", signinData.session.access_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
+      sameSite: "lax",
       maxAge: 60 * 60 * 1000, // 1 hour
     });
     const { data: employee, error: employeeError } = await supabase

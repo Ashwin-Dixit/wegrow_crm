@@ -15,8 +15,8 @@ export function useLeads() {
         lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         lead.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
         lead.email.toLowerCase().includes(searchQuery.toLowerCase())
-      const matchesStatus = statusFilter === 'All' || lead.status === statusFilter
-      const matchesSource = sourceFilter === 'All' || lead.source === sourceFilter
+      const matchesStatus = statusFilter === 'All' || lead.status.toLowerCase() === statusFilter.toLowerCase()
+      const matchesSource = sourceFilter === 'All' || lead.source.toLowerCase() === sourceFilter.toLowerCase()
       return matchesSearch && matchesStatus && matchesSource
     })
   }, [leads, searchQuery, statusFilter, sourceFilter])

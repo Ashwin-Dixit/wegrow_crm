@@ -6,6 +6,8 @@ const cookieParser = require("cookie-parser");
 const authRouter = require("./routers/authRouter");
 const leadRouter = require("./routers/leadRouter");
 const clientRouter = require("./routers/clientRouter")
+const projectRouter = require("./routers/projectRouter")
+const taskRouter = require("./routers/taskRouter")
 
 const app = express();
 
@@ -21,6 +23,8 @@ app.get('/', (req, res, next)=>{res.status(200).json({message: "welcome"})})
 app.use('/api/auth', authRouter)
 app.use('/api/lead', leadRouter)
 app.use('/api/client', clientRouter)
+app.use('/api/project', projectRouter)
+app.use('/api/task', taskRouter)
 
 const PORT = process.env.PORT || 5000
 app.listen(process.env.PORT, "0.0.0.0", ()=>{console.log(`server on port ${PORT}`)})

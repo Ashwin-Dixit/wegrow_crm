@@ -40,6 +40,7 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { leads } = useSelector((state) => state.leads);
+  const {clients} = useSelector((state)=>state.clients)
   const recentLeads = leads?.slice(0, 5) || [];
 
   return (
@@ -76,16 +77,16 @@ export default function DashboardPage() {
         />
         <StatCard
           label="Active Clients"
-          value={mockStats.activeClients}
-          subValue="1 renewal due"
+          value={clients.filter((c)=>c.status==="active")?.length }
+          subValue={`${clients.filter((c)=>c.status==="renewal")?.length} renewal due`}
           trend="neutral"
           trendLabel="Stable"
           icon={UserCheck}
           color="success"
         />
         <StatCard
-          label="Pipeline Value"
-          value={formatCurrency(mockStats.openPipeline)}
+          label="Total Contract Value"
+          value={formatCurrency(clients?.reduce((acc,curr)=>acc+(curr.contractValue || 0),0))}
           subValue="Open opportunities"
           trend="up"
           trendLabel="₹4.82M open"
@@ -207,7 +208,7 @@ export default function DashboardPage() {
         {/* Right Column */}
         <div className="space-y-6">
           {/* Activity Feed */}
-          <Card elevation={1}>
+          {/* <Card elevation={1}>
             <CardHeader title="Recent Activity" subtitle="Team updates" />
             <div className="space-y-3">
               {mockActivities.map((act) => {
@@ -232,10 +233,10 @@ export default function DashboardPage() {
                 );
               })}
             </div>
-          </Card>
+          </Card> */}
 
           {/* Team Performance */}
-          <Card elevation={1}>
+          {/* <Card elevation={1}>
             <CardHeader title="Team Performance" subtitle="This quarter" />
             <div className="space-y-3">
               {mockTeamMembers.map((member) => (
@@ -258,7 +259,7 @@ export default function DashboardPage() {
                 </div>
               ))}
             </div>
-          </Card>
+          </Card> */}
         </div>
       </div>
     </div>
