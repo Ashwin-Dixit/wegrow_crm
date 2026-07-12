@@ -7,6 +7,7 @@ export async function createTaskService(taskData){
       priority,
       projectId
     } = taskData
+    try{
     const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/task/create`,{
         method: 'POST',
         credentials: 'include',
@@ -22,6 +23,13 @@ export async function createTaskService(taskData){
         }),
     })
     const data = await res.json()
+    if(!res.ok){
+        throw new Error(data.message || "Failed to create task")
+    }
     console.log(data)
     return data
+    }catch(e){
+        console.error(e)
+        throw e
+    }
 }

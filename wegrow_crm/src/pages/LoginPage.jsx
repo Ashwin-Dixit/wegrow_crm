@@ -72,7 +72,7 @@ export default function LoginPage() {
               iconRight={
                 <button
                   type="button"
-                  onClick={() => setShowPass(!showPass)}
+                  onClick={(e) => { setShowPass(!showPass)}}
                   className="cursor-pointer"
                 >
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -122,7 +122,7 @@ export default function LoginPage() {
                 to="/signup"
                 className="text-[#6750a4] hover:text-[#4f378a] font-medium transition-colors"
               >
-                Sign In
+                Sign Up
               </Link>
             </p>
           </div>

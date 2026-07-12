@@ -67,7 +67,7 @@ const Input = forwardRef(function Input(
         />
 
         {iconRight && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7a7582] pointer-events-none">
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7a7582]">
             {iconRight}
           </span>
         )}
