@@ -1,6 +1,6 @@
 import {createAsyncThunk} from "@reduxjs/toolkit"
 import { getProjectsForClient } from "../../services/projectService"
-import { createTaskService } from "../../services/taskService"
+import { createTaskService, updateTaskStatusService } from "../../services/taskService"
 
 export const fetchProjects = createAsyncThunk('projects/fetchProjects', async (clientId, {rejectWithValue}) => {
     console.log("inside fetchprojects thunk")
@@ -15,6 +15,14 @@ export const addTaskThunk = createAsyncThunk('projects/addTaskThunk', async(task
     try {
     const data = await createTaskService(taskData)
     return data.task
+    } catch(error) {
+        return rejectWithValue(error.message)
+    }
+})
+export const updateTaskStatusThunk = createAsyncThunk('projects/updateTaskStatusThunk', async(taskData, {rejectWithValue}) => {
+    try{
+        const data = await updateTaskStatusService(taskData)
+        return data.task
     } catch(error) {
         return rejectWithValue(error.message)
     }

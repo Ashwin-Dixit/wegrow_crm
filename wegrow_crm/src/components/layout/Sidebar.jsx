@@ -163,7 +163,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
           );
         })}
 
-        {!collapsed && (
+        {/* {!collapsed && (
           <p className="text-[10px] font-semibold text-[#7a7582] uppercase tracking-[1px] px-3 mt-6 mb-3">
             Account
           </p>
@@ -196,7 +196,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
               {!collapsed && <span>Settings</span>}
             </>
           )}
-        </NavLink>
+        </NavLink> */}
       </nav>
 
       {/* Bottom: User + Collapse */}

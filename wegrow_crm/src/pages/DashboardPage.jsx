@@ -72,7 +72,6 @@ export default function DashboardPage() {
           value={leads.length}
           subValue={`+${leads.length} this month`}
           trend="up"
-          trendLabel="12% vs last month"
           icon={Users}
           color="primary"
         />
@@ -90,16 +89,14 @@ export default function DashboardPage() {
           value={formatCurrency(clients?.reduce((acc,curr)=>acc+(curr.contractValue || 0),0))}
           subValue="Open opportunities"
           trend="up"
-          trendLabel="₹4.82M open"
           icon={IndianRupee}
           color="warning"
         />
         <StatCard
           label="Win Rate"
-          value={`${mockStats.winRate}%`}
-          subValue={`Avg deal: ${formatCurrency(mockStats.avgDealSize)}`}
+          value={`${(clients?.length/(leads.length+clients.length)).toFixed(2)*100}%`}
+          subValue={`Avg deal: ${formatCurrency(clients?.reduce((acc,curr)=>acc+(curr.contractValue || 0),0)/clients.length)}`}
           trend="up"
-          trendLabel="Up from 11.2%"
           icon={Target}
           color="secondary"
         />

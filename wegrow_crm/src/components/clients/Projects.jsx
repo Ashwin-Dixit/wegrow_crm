@@ -7,12 +7,13 @@ import {
   CheckCircle2,
   Circle,
   Plus,
+  Loader2,
 } from "lucide-react";
 import {toast} from "react-hot-toast"
 import Card, { CardHeader } from "../ui/Card";
 import { Select } from "../ui/Input";
 import { useDispatch } from "react-redux";
-import { addTaskThunk } from "../../store/project/projectThunk";
+import { addTaskThunk, updateTaskStatusThunk } from "../../store/project/projectThunk";
 const Projects = ({ projects }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch()
@@ -25,6 +26,7 @@ const Projects = ({ projects }) => {
   const [taskStatus, setTaskStatus] = useState("todo");
   const [taskPriority, setTaskPriority] = useState("medium");
   const [addingTask, setAddingTask] = useState(false)
+  const [changingCompleteStatus, setChangingCompleteStatus] = useState(false)
   const toggleProject = (id) => {
     setExpandedProjectId(expandedProjectId === id ? null : id);
   };
@@ -59,6 +61,19 @@ const Projects = ({ projects }) => {
     setTaskDescription("");
     setTaskStatus("todo");
     setTaskPriority("medium");
+  }
+  const handleCompleteStatus = async (taskId) => {
+    setChangingCompleteStatus(taskId)
+    try {
+      await dispatch(updateTaskStatusThunk({
+        id: taskId,
+        status: "completed"
+      })).unwrap();
+      toast.success("task completed successfully")
+    } catch(error){
+      toast.error("Failed to change status")
+    }
+    setChangingCompleteStatus(false)
   }
   return (
     <>
@@ -223,9 +238,19 @@ const Projects = ({ projects }) => {
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       console.log("completed", task.id);
+                                      if(task.status.toLowerCase() === "completed"){
+                                        toast.info("task is already completed")
+                                        return
+                                      }
+                                      handleCompleteStatus(task.id)
                                     }}
                                   >
-                                    {task.status === "Completed" ? (
+                                    {changingCompleteStatus === task.id ? (
+                                      <Loader2
+                                        size={16}
+                                        className="animate-spin text-[#7a7582] shrink-0"
+                                      />
+                                    ) : task.status.toLowerCase() === "completed" ? (
                                       <CheckCircle2
                                         size={16}
                                         className="text-[#00531b] shrink-0"
@@ -239,7 +264,7 @@ const Projects = ({ projects }) => {
                                   </button>
                                   <div>
                                     <p
-                                      className={`text-[13px] font-medium ${task.status === "Completed" ? "text-[#00531b] line-through opacity-70" : "text-[#1d1b20]"}`}
+                                      className={`text-[13px] font-medium ${task.status.toLowerCase() === "completed" ? "text-[#00531b] line-through opacity-70" : "text-[#1d1b20]"}`}
                                     >
                                       {task.title}
                                     </p>

@@ -1,5 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit'
-import {fetchProjects, addTaskThunk} from './projectThunk'
+import {fetchProjects, addTaskThunk, updateTaskStatusThunk} from './projectThunk'
 
 const projectSlice = createSlice({
     name: 'projects',
@@ -39,6 +39,29 @@ const projectSlice = createSlice({
             state.projects = newState
         })
         .addCase(addTaskThunk.rejected, (state, action) => {
+            state.loading = false
+            state.error = action.payload
+        })
+        .addCase(updateTaskStatusThunk.pending, (state) => {
+            state.loading = true
+            state.error = null
+        })
+        .addCase(updateTaskStatusThunk.fulfilled, (state, action) => {
+            state.loading = false
+            const newState = state.projects.map((project) => {
+                if(project.id === action.payload.project_id){
+                    return {...project, tasks: project.tasks.map((task) => {
+                        if(task.id === action.payload.id){
+                            return action.payload
+                        }
+                        return task
+                    })}
+                }
+                return project
+            })
+            state.projects = newState
+        })
+        .addCase(updateTaskStatusThunk.rejected, (state, action) => {
             state.loading = false
             state.error = action.payload
         })

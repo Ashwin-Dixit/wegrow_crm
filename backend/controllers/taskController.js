@@ -42,3 +42,32 @@ exports.createTask = async (req, res, next) => {
       .json({ success: false, message: "Internal Server Error" });
   }
 };
+exports.updateTaskStatus = async (req, res, next) => {
+  const {id} = req.params;
+  const {status} = req.body
+  try {
+    const {data: task, error: taskError} = await supabase.from("tasks").update({status}).eq("id",id).select("*").single();
+    if(taskError){
+      console.log("error in updating task status", taskError);
+      return res.status(400).json({success: false, message: taskError.message});
+    }
+    const {data: project} = await supabase.from("projects").select(`name, clients(name, company)`).eq("id",task.project_id).single();
+    await createNotification({
+      title: "Task Status Updated",
+      message: `'${task.title}' task status updated in '${project.name}' project for '${project.clients.name}, ${project.clients.company}'`,
+      type: "task",
+    });
+    return res.status(200).json({
+      success: true,
+      message: "Task status updated successfully",
+      task: {
+        ...task,
+        createdAt: new Date(task.created_at),
+        updatedAt: new Date(task.updated_at),
+      },
+    });
+  } catch (error) {
+    console.log("error in updating task status", error);
+    return res.status(500).json({success: false, message: "Internal Server Error"});
+  }
+}

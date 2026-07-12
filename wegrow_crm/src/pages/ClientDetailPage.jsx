@@ -127,11 +127,11 @@ export default function ClientDetailPage() {
           <ArrowLeft size={18} />
           Back to Clients
         </button>
-        <div className="flex gap-2">
+        {/* <div className="flex gap-2">
           <Button variant="outlined" size="sm" icon={<RefreshCw size={14} />}>
             Schedule Renewal
           </Button>
-        </div>
+        </div> */}
       </div>
 
       {/* Hero */}
