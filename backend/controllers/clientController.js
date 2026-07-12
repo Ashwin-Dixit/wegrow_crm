@@ -18,8 +18,8 @@ exports.getClients = async (req, res, next) => {
     }
     const { data: clients, error: clientsError } = await supabase
       .from("clients")
-      .select("*")
-      .eq("account_manager", employee.id)
+      .select(`*, employees (full_name, employee_id)`)
+      // .eq("account_manager", employee.id)
       .order("created_at", { ascending: false });
     if (clientsError) {
       console.log("error in fetching clients", clientsError);
@@ -36,14 +36,15 @@ exports.getClients = async (req, res, next) => {
         id: client.id,
         name: client.name,
         company: client.company,
+        industry: client.industry,
         email: client.email,
         phone: client.phone,
         contractValue: client.contract_value,
         revenue: client.revenue,
-        accountManager: employee.full_name,
+        accountManager: client.employees.full_name,
         status: client.status,
         notes: client.notes,
-        employeeId: employee.employee_id,
+        employeeId: client.employees.employee_id,
         contractStart: new Date(client.contract_start),
         contractEnd: new Date(client.contract_end),
         createdAt: new Date(client.created_at),
@@ -66,6 +67,7 @@ exports.createClient = async (req, res, next) => {
   const {
     name,
     company,
+    industry,
     email,
     phone,
     status,
@@ -94,6 +96,7 @@ exports.createClient = async (req, res, next) => {
       .insert({
         name: name,
         company: company,
+        industry: industry,
         email: email,
         phone: phone,
         status: status,

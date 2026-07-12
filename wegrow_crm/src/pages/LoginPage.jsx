@@ -81,7 +81,7 @@ export default function LoginPage() {
               required
             />
 
-            <div className="flex items-center justify-between text-[12px]">
+            {/* <div className="flex items-center justify-between text-[12px]">
               <label className="flex items-center gap-2 cursor-pointer text-[#49454f]">
                 <input
                   type="checkbox"
@@ -95,7 +95,7 @@ export default function LoginPage() {
               >
                 Forgot password?
               </button>
-            </div>
+            </div> */}
 
             <Button
               type="submit"

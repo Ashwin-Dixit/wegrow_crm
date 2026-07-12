@@ -17,18 +17,22 @@ export const addLeadThunk = createAsyncThunk(
   async ({
       name,
       company,
+      industry,
       email,
       phone,
       source,
+      status,
       notes,
     }, {rejectWithValue}) => {
       try {
       const data = await addLeadService({
         name,
         company,
+        industry,
         email,
         phone,
         source,
+        status,
         notes,
       })
       return data.lead;

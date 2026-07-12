@@ -99,6 +99,7 @@ export default function LeadDetailPage() {
       email:email,
       phone:phone,
       company: company,
+      industry: industry,
       status: "active",
       notes: notes,
       contractStart: contractStartDate,

@@ -17,7 +17,7 @@ export async function getClientsService(){
     }
 }
 
-export async function createClientService(clientData){      //clientData = {name,company,status,email,phone,notes,contractStart,contractEnd,contractValue}
+export async function createClientService(clientData){      //clientData = {name,company,industry,status,email,phone,notes,contractStart,contractEnd,contractValue}
     console.log("inside create client service", clientData)
     try{
     const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client/create`,{

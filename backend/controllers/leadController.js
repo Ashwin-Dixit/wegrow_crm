@@ -1,7 +1,7 @@
 const supabase = require("../config/supabase");
 
 exports.createLead = async (req, res) => {
-  const { name, company, email, phone, notes, source } = req.body;
+  const { name, company,industry, status, email, phone, notes, source } = req.body;
   try {
     const { data: employee, error: employeeError } = await supabase
       .from("employees")
@@ -20,6 +20,8 @@ exports.createLead = async (req, res) => {
       .insert({
         name,
         company,
+        industry,
+        status,
         email,
         phone,
         notes,
@@ -84,6 +86,7 @@ exports.getLeads = async (req, res, next) => {
         id: lead.id,
         name: lead.name,
         company: lead.company,
+        industry: lead.industry,
         email: lead.email,
         phone: lead.phone,
         status: lead.status,

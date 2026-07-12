@@ -96,6 +96,7 @@ export default function AddLeadPage() {
       try{
       await dispatch(updateLeadThunk({leadId: existing.id, updates: {name,
       company,
+      industry,
       email,
       phone,
       source,
@@ -113,9 +114,11 @@ export default function AddLeadPage() {
       await dispatch(addLeadThunk({
       name,
       company,
+      industry,
       email,
       phone,
       source,
+      status,
       notes,
     })).unwrap();
     toast.success("Lead added successfully")

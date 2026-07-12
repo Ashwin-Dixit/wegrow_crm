@@ -219,7 +219,7 @@ export default function ClientDetailPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card elevation={1}>
           <CardHeader title="Account Details" />
-          {/* <InfoRow icon={Building2}    label="Industry"         value={client.industry} /> */}
+          <InfoRow icon={Building2}    label="Industry"         value={client.industry} />
           <InfoRow
             icon={User}
             label="Account Manager"
