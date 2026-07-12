@@ -3,9 +3,13 @@ import { getLeadService, deleteLeadService, addLeadService, updateLeadService } 
 
 export const fetchLeads = createAsyncThunk(
   "leads/fetchLeads",
-  async () => {
+  async (_, {rejectWithValue}) => {
+    try {
     const data = await getLeadService()
     return data.leads;
+  } catch(error) {
+    return rejectWithValue(error.message)
+  }
   }
 );
 export const addLeadThunk = createAsyncThunk(
