@@ -17,7 +17,8 @@ export const addLeadThunk = createAsyncThunk(
       phone,
       source,
       notes,
-    }) => {
+    }, {rejectWithValue}) => {
+      try {
       const data = await addLeadService({
         name,
         company,
@@ -27,20 +28,31 @@ export const addLeadThunk = createAsyncThunk(
         notes,
       })
       return data.lead;
+    } catch(error) {
+        return rejectWithValue(error.message)
+    }
     }
 )
 export const deleteLeadThunk = createAsyncThunk(
   "leads/deleteLeadThunk",
-  async (leadId) => {
+  async (leadId, {rejectWithValue}) => {
+    try {
     const data = await deleteLeadService(leadId)
     return data.leadId;
+  } catch(error) {
+    return rejectWithValue(error.message)
+  }
   }
 );
 export const updateLeadThunk = createAsyncThunk(
   "leads/updateLeadThunk",
-  async ({leadId, updates}) => {
+  async ({leadId, updates}, {rejectWithValue}) => {
     console.log("inside thunk ", updates)
+    try {
     const data = await updateLeadService(leadId, updates)
     return data.lead
+  } catch(error) {
+    return rejectWithValue(error.message)
+  }
   }
 )

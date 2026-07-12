@@ -20,7 +20,7 @@ const leadSlice = createSlice({
       .addCase(fetchLeads.rejected, (state, action) => {
         state.leads = []
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload;
       })
       //delete lead
       .addCase(deleteLeadThunk.pending, (state)=>{
@@ -32,7 +32,7 @@ const leadSlice = createSlice({
       })
       .addCase(deleteLeadThunk.rejected, (state, action)=>{
         state.loading = false
-        state.error = action.error.message
+        state.error = action.payload
       })
       //add lead
       .addCase(addLeadThunk.pending, (state)=>{
@@ -44,7 +44,7 @@ const leadSlice = createSlice({
       })
       .addCase(addLeadThunk.rejected, (state, action)=>{
         state.loading = false
-        state.error = action.error.message
+        state.error = action.payload
       })
       //update lead
       .addCase(updateLeadThunk.pending, (state)=>{
@@ -56,7 +56,7 @@ const leadSlice = createSlice({
       })
       .addCase(updateLeadThunk.rejected, (state, action)=>{
         state.loading = false
-        state.error = action.error.message
+        state.error = action.payload
       })
   },
 });

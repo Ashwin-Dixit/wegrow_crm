@@ -12,6 +12,7 @@ import {
   RefreshCw,
   Folder,
 } from "lucide-react";
+import { toast } from "react-hot-toast";
 import { useClients } from "../hooks/useClients";
 import Badge from "../components/ui/Badge";
 import Avatar from "../components/ui/Avatar";
@@ -50,9 +51,9 @@ export default function ClientDetailPage() {
     async function getProjects(){
       setFetchingProjects(true)
       try{
-        await dispatch(fetchProjects(id))
+        await dispatch(fetchProjects(id)).unwrap()
       } catch(error){
-        console.log(error)
+        toast.error("Failed to fetch projects")
       } finally{
         setFetchingProjects(false)
       }

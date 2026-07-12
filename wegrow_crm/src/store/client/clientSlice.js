@@ -20,7 +20,7 @@ const clientSlice = createSlice({
       .addCase(fetchClients.rejected, (state, action) => {
         state.clients = []
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload;
       })
       //create client
       .addCase(createClientThunk.pending, (state) => {
@@ -32,7 +32,7 @@ const clientSlice = createSlice({
       })
       .addCase(createClientThunk.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload;
       })
   },
 });

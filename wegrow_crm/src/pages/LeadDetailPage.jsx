@@ -17,6 +17,7 @@ import {
   CheckCircle,
   UserPlus,
 } from "lucide-react";
+import {toast} from "react-hot-toast"
 import { useLeads } from "../hooks/useLeads";
 import Badge from "../components/ui/Badge";
 import Avatar from "../components/ui/Avatar";
@@ -80,7 +81,11 @@ export default function LeadDetailPage() {
 
   const handleDelete = async () => {
     setDeleting(true)
-    await dispatch(deleteLeadThunk(id))
+    try{
+      await dispatch(deleteLeadThunk(id)).unwrap()
+    }catch(error){
+      toast.error("Failed to delete lead")
+    }
     setDeleting(false)
     setDeleteModal(false)
     navigate("/leads");
@@ -101,9 +106,15 @@ export default function LeadDetailPage() {
       contractValue: contractValue,
     }
     console.log(clientData)
-    await dispatch(createClientThunk(clientData))
-    await dispatch(deleteLeadThunk(id))
+    try{
+      await dispatch(createClientThunk(clientData)).unwrap()
+      await dispatch(deleteLeadThunk(id)).unwrap()
+      toast.success("Lead converted to client successfully!")
+    }catch(error){
+      toast.error("Some problem occured while converting, try refreshing the page!")
+    }
     setUpdatingStatus(false)
+    setConvertToClientModal(false)
     navigate("/clients")
   };
 

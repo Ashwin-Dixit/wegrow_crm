@@ -8,6 +8,7 @@ import {
   Circle,
   Plus,
 } from "lucide-react";
+import {toast} from "react-hot-toast"
 import Card, { CardHeader } from "../ui/Card";
 import { Select } from "../ui/Input";
 import { useDispatch } from "react-redux";
@@ -33,13 +34,18 @@ const Projects = ({ projects }) => {
   const handleAddTask = async () => {
     console.log({taskTitle, taskDescription, taskStatus, taskPriority, projectId: addingTaskForProjectId})
     setAddingTask(true)
+    try{
     await dispatch(addTaskThunk({
       title: taskTitle,
       description: taskDescription,
       status: taskStatus,
       priority: taskPriority,
       projectId: addingTaskForProjectId
-    }))
+    })).unwrap();
+    toast.success("task added successfully")
+  } catch(error){
+    toast.error("Failed to add task")
+  }
     setAddingTask(false)
     setAddingTaskForProjectId(null);
     setTaskTitle("");

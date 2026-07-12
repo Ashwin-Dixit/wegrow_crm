@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Save } from "lucide-react";
+import {toast} from "react-hot-toast"
 import { useLeads } from "../hooks/useLeads";
 import Input, { Select, Textarea } from "../components/ui/Input";
 import Button from "../components/ui/Button";
@@ -92,17 +93,23 @@ export default function AddLeadPage() {
     setSaving(true);
     if(existing){
       console.log("dispatching update", notes)
+      try{
       await dispatch(updateLeadThunk({leadId: existing.id, updates: {name,
       company,
       email,
       phone,
       source,
       status,
-      notes}}))
+      notes}})).unwrap()
+      toast.success("Lead updated successfully")
+      } catch(error){
+        toast.error("Failed to update lead")
+      }
       setSaving(false)
       return navigate(-1)
     }
     else{
+      try{
       await dispatch(addLeadThunk({
       name,
       company,
@@ -110,7 +117,11 @@ export default function AddLeadPage() {
       phone,
       source,
       notes,
-    }));
+    })).unwrap();
+    toast.success("Lead added successfully")
+  } catch(error){
+    toast.error("Failed to add lead")
+  }
     }
     
     setSaving(false);

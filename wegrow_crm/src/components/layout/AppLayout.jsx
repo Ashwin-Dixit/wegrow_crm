@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
+import {toast} from "react-hot-toast"
 import { useDispatch } from "react-redux";
 import { fetchLeads } from "../../store/lead/leadThunks";
 import { fetchClients } from "../../store/client/clientThunks";
@@ -11,8 +12,19 @@ export default function AppLayout() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const dispatch = useDispatch()
   useEffect(()=>{
-    dispatch(fetchLeads())
-    dispatch(fetchClients())
+    async function fetchData(){
+      try{
+        await dispatch(fetchLeads()).unwrap()
+      }catch(error){
+        toast.error("Could not fetch leads, refresh page")
+      }
+      try{
+        await dispatch(fetchClients()).unwrap()
+      }catch(error){
+        toast.error("Could not fetch clients, refresh page")
+      }
+    }
+    fetchData()
   }, [])
 
   return (
