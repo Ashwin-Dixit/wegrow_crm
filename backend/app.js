@@ -8,6 +8,7 @@ const leadRouter = require("./routers/leadRouter");
 const clientRouter = require("./routers/clientRouter")
 const projectRouter = require("./routers/projectRouter")
 const taskRouter = require("./routers/taskRouter")
+const notificationRouter = require("./routers/notificationRouter")
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use('/api/lead', leadRouter)
 app.use('/api/client', clientRouter)
 app.use('/api/project', projectRouter)
 app.use('/api/task', taskRouter)
+app.use('/api/notification', notificationRouter)
 
 const PORT = process.env.PORT || 5000
 app.listen(process.env.PORT, "0.0.0.0", ()=>{console.log(`server on port ${PORT}`)})

@@ -49,8 +49,8 @@ export default function Sidebar({ collapsed, setCollapsed }) {
         ${collapsed ? "w-20" : "w-[280px]"}`}
     >
       {/* Logo */}
-      <div className="flex items-center gap-3 px-5 h-16 border-b border-[#e6e0e9] shrink-0">
-        <div className="w-24 h-24 rounded-xl flex items-center justify-center shrink-0">
+      <div className={`flex items-center gap-3 ${collapsed ? "px-2" : "px-5"} h-16 border-b border-[#e6e0e9] shrink-0`}>
+        <div className={`rounded-xl flex items-center justify-center shrink-0 ${collapsed ? "w-16 h-16" : "w-24 h-24"}`}>
           <img alt="logo" src="/wegrowfooterlogo.png" />
         </div>
         {!collapsed && (

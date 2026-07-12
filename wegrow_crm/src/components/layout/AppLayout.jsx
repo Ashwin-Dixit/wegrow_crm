@@ -6,6 +6,7 @@ import { fetchLeads } from "../../store/lead/leadThunks";
 import { fetchClients } from "../../store/client/clientThunks";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
+import Notifications from "./Notifications";
 
 export default function AppLayout() {
   const [collapsed, setCollapsed] = useState(false);
@@ -27,7 +28,8 @@ export default function AppLayout() {
     fetchData()
   }, [])
 
-  return (
+  return (<>
+  <Notifications />
     <div className="flex h-screen bg-[#fdf7ff] overflow-hidden">
       {/* Desktop Sidebar */}
       <div className="hidden md:block">
@@ -57,5 +59,6 @@ export default function AppLayout() {
         </main>
       </div>
     </div>
+    </>
   )
 }

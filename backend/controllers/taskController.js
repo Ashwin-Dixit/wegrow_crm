@@ -1,4 +1,5 @@
 const supabase = require("../config/supabase");
+const {createNotification} = require("../services/notificationServices")
 exports.createTask = async (req, res, next) => {
   const { title, description, status, priority, projectId } = req.body;
   try {
@@ -19,6 +20,12 @@ exports.createTask = async (req, res, next) => {
         .status(400)
         .json({ success: false, message: taskError.message });
     }
+    const {data: project} = await supabase.from("projects").select(`name, clients(name, company)`).eq("id", projectId).single();
+    await createNotification({
+      title: "Task Created",
+      message: `'${title}' task created in '${project.name}' project for '${project.clients.name}, ${project.clients.company}'`,
+      type: "task",
+    });
     return res.status(200).json({
       success: true,
       message: "Task created successfully",

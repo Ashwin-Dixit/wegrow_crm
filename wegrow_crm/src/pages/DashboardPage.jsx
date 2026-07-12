@@ -144,8 +144,17 @@ export default function DashboardPage() {
                     ))}
                   </tr>
                 </thead>
-                {recentLeads.length===0 && <p>No leads</p>}
                 <tbody>
+                  {recentLeads.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan="5"
+                        className="px-4 py-8 text-center text-[13px] text-[#7a7582]"
+                      >
+                        No leads found
+                      </td>
+                    </tr>
+                  )}
                   {recentLeads.map((lead) => (
                     <tr
                       key={lead.id}

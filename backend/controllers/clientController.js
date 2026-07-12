@@ -1,4 +1,5 @@
 const supabase = require("../config/supabase");
+const { createNotification } = require("../services/notificationServices");
 exports.getClients = async (req, res, next) => {
   try {
     const { data: employee, error: employeeError } = await supabase
@@ -10,7 +11,10 @@ exports.getClients = async (req, res, next) => {
       console.log("error in fetching employee", employeeError);
       return res
         .status(400)
-        .json({ success: false, message: "Could not fetch clients details, try again later!" });
+        .json({
+          success: false,
+          message: "Could not fetch clients details, try again later!",
+        });
     }
     const { data: clients, error: clientsError } = await supabase
       .from("clients")
@@ -21,7 +25,10 @@ exports.getClients = async (req, res, next) => {
       console.log("error in fetching clients", clientsError);
       return res
         .status(400)
-        .json({ success: false, message: `Error in fetching clients! ${clientsError.message}` });
+        .json({
+          success: false,
+          message: `Error in fetching clients! ${clientsError.message}`,
+        });
     }
     const clientsArray = [];
     clients.forEach((client) => {
@@ -77,7 +84,10 @@ exports.createClient = async (req, res, next) => {
       console.log("error in fetching employee", employeeError);
       return res
         .status(400)
-        .json({ success: false, message: "Could not create client try again later" });
+        .json({
+          success: false,
+          message: "Could not create client try again later",
+        });
     }
     const { data: client, error: clientError } = await supabase
       .from("clients")
@@ -99,8 +109,16 @@ exports.createClient = async (req, res, next) => {
       console.log("error in creating client", clientError);
       return res
         .status(400)
-        .json({ success: false, message: `Error in creating client, try again later! ${clientError.message}`});
+        .json({
+          success: false,
+          message: `Error in creating client, try again later! ${clientError.message}`,
+        });
     }
+    await createNotification({
+      title: "Client Added",
+      message: `${name} from ${company} was added as a new client`,
+      type: "client",
+    });
     return res.status(200).json({
       success: true,
       message: "Client created successfully",
