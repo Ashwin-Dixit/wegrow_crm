@@ -94,7 +94,7 @@ export default function DashboardPage() {
         />
         <StatCard
           label="Win Rate"
-          value={`${(clients?.length/(leads.length+clients.length)).toFixed(2)*100}%`}
+          value={`${((clients?.length/(leads.length+clients.length))*100).toFixed(2)}%`}
           subValue={`Avg deal: ${formatCurrency(clients?.reduce((acc,curr)=>acc+(curr.contractValue || 0),0)/clients.length)}`}
           trend="up"
           icon={Target}

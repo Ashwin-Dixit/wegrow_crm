@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Bell, Search, Menu } from "lucide-react";
+import GradientText from "../ui/GradientText";
 import Avatar from "../ui/Avatar";
 import { useAuth } from "../../context/AuthProvider";
 import { useSelector, useDispatch } from "react-redux";
@@ -65,6 +66,18 @@ export default function TopBar({ onMenuClick }) {
           })}
         </p>
       </div>
+      {user.role==="admin" ? (
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center">
+          <GradientText
+            colors={["#5227FF", "#FF9FFC", "#B497CF"]}
+            animationSpeed={8}
+            showBorder={true}
+            className="custom-class"
+          >
+            Admin
+          </GradientText>
+        </div>
+      ) : null}
 
       {/* Notifications */}
       <div className="relative">

@@ -2,24 +2,9 @@ const supabase = require("../config/supabase");
 const { createNotification } = require("../services/notificationServices");
 exports.getClients = async (req, res, next) => {
   try {
-    const { data: employee, error: employeeError } = await supabase
-      .from("employees")
-      .select("id, full_name, employee_id")
-      .eq("auth_user_id", req.user.id)
-      .single();
-    if (employeeError) {
-      console.log("error in fetching employee", employeeError);
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Could not fetch clients details, try again later!",
-        });
-    }
     const { data: clients, error: clientsError } = await supabase
       .from("clients")
       .select(`*, employees (full_name, employee_id)`)
-      // .eq("account_manager", employee.id)
       .order("created_at", { ascending: false });
     if (clientsError) {
       console.log("error in fetching clients", clientsError);
@@ -33,18 +18,11 @@ exports.getClients = async (req, res, next) => {
     const clientsArray = [];
     clients.forEach((client) => {
       clientsArray.push({
-        id: client.id,
-        name: client.name,
-        company: client.company,
-        industry: client.industry,
-        email: client.email,
-        phone: client.phone,
+        ...client,
         contractValue: client.contract_value,
-        revenue: client.revenue,
         accountManager: client.employees.full_name,
-        status: client.status,
-        notes: client.notes,
-        employeeId: client.employees.employee_id,
+        employeeId: client.employees.id,
+        companyEmployeeId: client.employees.employee_id,
         contractStart: new Date(client.contract_start),
         contractEnd: new Date(client.contract_end),
         createdAt: new Date(client.created_at),
@@ -75,22 +53,16 @@ exports.createClient = async (req, res, next) => {
     contractStart,
     contractEnd,
     contractValue,
+    accountManager,
   } = req.body;
+  let assigned
+  if(req.user.role==="admin"){
+    assigned = accountManager
+  }
+  else{
+    assigned = req.user.employeeId
+  }
   try {
-    const { data: employee, error: employeeError } = await supabase
-      .from("employees")
-      .select("id, full_name, employee_id")
-      .eq("auth_user_id", req.user.id)
-      .single();
-    if (employeeError) {
-      console.log("error in fetching employee", employeeError);
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Could not create client try again later",
-        });
-    }
     const { data: client, error: clientError } = await supabase
       .from("clients")
       .insert({
@@ -104,9 +76,9 @@ exports.createClient = async (req, res, next) => {
         contract_start: new Date(contractStart).toISOString() || new Date(),
         contract_end: new Date(contractEnd).toISOString() || new Date(),
         contract_value: contractValue,
-        account_manager: employee.id,
+        account_manager: assigned,
       })
-      .select("*")
+      .select(`*, employees (full_name, employee_id)`)
       .single();
     if (clientError) {
       console.log("error in creating client", clientError);
@@ -117,7 +89,7 @@ exports.createClient = async (req, res, next) => {
           message: `Error in creating client, try again later! ${clientError.message}`,
         });
     }
-    await createNotification({
+    createNotification({
       title: "Client Added",
       message: `${name} from ${company} was added as a new client`,
       type: "client",
@@ -127,8 +99,8 @@ exports.createClient = async (req, res, next) => {
       message: "Client created successfully",
       client: {
         ...client,
-        accountManager: employee.full_name,
-        employeeId: employee.employee_id,
+        accountManager: client.employees.full_name,
+        employeeId: client.employees.employee_id,
         contractValue: client.contract_value,
         contractStart: new Date(client.contract_start),
         contractEnd: new Date(client.contract_end),
@@ -142,4 +114,99 @@ exports.createClient = async (req, res, next) => {
       .status(500)
       .json({ success: false, message: "Internal Server Error" });
   }
+};
+exports.updateClient = async (req, res, next) => {
+  const {name,company,industry,status,email,phone,
+        notes,contractStart,contractEnd,contractValue, accountManager} = req.body
+  const {id} = req.params
+  try {
+    const { data: client, error: clientError } = await supabase
+      .from("clients")
+      .update({
+        name: name,
+        company: company,
+        industry: industry,
+        email: email,
+        phone: phone,
+        status: status,
+        notes: notes,
+        contract_start: new Date(contractStart).toISOString() || new Date(),
+        contract_end: new Date(contractEnd).toISOString() || new Date(),
+        contract_value: contractValue,
+        account_manager: accountManager,
+      })
+      .eq("id", id)
+      .select(`*, employees (full_name, employee_id)`)
+      .single();
+    if (clientError) {
+      console.log("error in updating client", clientError);
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: `Error in updating client, try again later! ${clientError.message}`,
+        });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Client updated successfully",
+      client: {
+        ...client,
+        accountManager: client.employees.full_name,
+        employeeId: client.employees.employee_id,
+        contractValue: client.contract_value,
+        contractStart: new Date(client.contract_start),
+        contractEnd: new Date(client.contract_end),
+        createdAt: new Date(client.created_at),
+        updatedAt: new Date(client.updated_at),
+      },
+    });
+  } catch (error) {
+    console.log("error in updating client", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+}
+exports.deleteClientById = async (req, res, next) => {
+  const clientId = req.params.id;
+    if (!clientId) {
+      return res.status(400).json({
+        success: false,
+        message: "Client ID is required",
+      });
+    }
+    try {
+      const { data: client, error: clientError } = await supabase
+        .from("clients")
+        .select("id")
+        .eq("id", clientId)
+        .single();
+  
+      if (clientError || !client) {
+        return res.status(404).json({
+          success: false,
+          message: "Client not found",
+        });
+      }
+      const { error } = await supabase.from("clients").delete().eq("id", clientId);
+  
+      if (error) {
+        return res.status(400).json({
+          success: false,
+          message: `Error in deleting client! ${error.message}`,
+        });
+      }
+  
+      return res.status(200).json({
+        success: true,
+        message: "Client deleted successfully",
+        clientId,
+      });
+    } catch (error) {
+      console.log("error in deleting client", error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
+    }
 };

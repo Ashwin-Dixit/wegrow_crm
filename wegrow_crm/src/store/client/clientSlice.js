@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit"
-import {fetchClients, createClientThunk} from "./clientThunks"
+import {fetchClients, createClientThunk, updateClientThunk, deleteClientThunk} from "./clientThunks"
 const clientSlice = createSlice({
   name: "clients",
   initialState: {
@@ -31,6 +31,30 @@ const clientSlice = createSlice({
         state.loading = false;
       })
       .addCase(createClientThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      //update client
+      .addCase(updateClientThunk.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(updateClientThunk.fulfilled, (state, action) => {
+        state.clients = state.clients.map((c)=> c.id===action.payload.id ? action.payload : c)
+        state.loading = false;
+      })
+      .addCase(updateClientThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      //delete client
+      .addCase(deleteClientThunk.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(deleteClientThunk.fulfilled, (state, action) => {
+        state.clients = state.clients.filter((c)=> c.id!==action.payload)
+        state.loading = false;
+      })
+      .addCase(deleteClientThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

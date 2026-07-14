@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteLeadThunk } from "../store/lead/leadThunks";
-import {createClientThunk} from "../store/client/clientThunks";
+import { createClientThunk } from "../store/client/clientThunks";
 import {
   ArrowLeft,
   Phone,
@@ -17,7 +17,7 @@ import {
   CheckCircle,
   UserPlus,
 } from "lucide-react";
-import {toast} from "react-hot-toast"
+import { toast } from "react-hot-toast";
 import { useLeads } from "../hooks/useLeads";
 import Badge from "../components/ui/Badge";
 import Avatar from "../components/ui/Avatar";
@@ -25,6 +25,8 @@ import Button from "../components/ui/Button";
 import Card, { CardHeader } from "../components/ui/Card";
 import Modal from "../components/ui/Modal";
 import { LEAD_STATUSES } from "../data/mockData";
+import { Select } from "@/components/ui/Input";
+import { useAuth } from "@/context/AuthProvider";
 
 function formatCurrency(val) {
   return `₹${val.toLocaleString("en-IN")}`;
@@ -50,16 +52,20 @@ export default function LeadDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { leads, loading } = useSelector((state) => state.leads);
-  const dispatch = useDispatch()
+  const { employees } = useSelector((state) => state.employees);
+  const dispatch = useDispatch();
   const { getLeadById, updateLeadStatus, deleteLead } = useLeads();
   const [deleteModal, setDeleteModal] = useState(false);
   const [statusModal, setStatusModal] = useState(false);
   const [convertToClientModal, setConvertToClientModal] = useState(false);
-  const [deleting, setDeleting] = useState(false)
-  const [updatingStatus, setUpdatingStatus] = useState(false)
+  const [deleting, setDeleting] = useState(false);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
   const [contractStartDate, setContractStartDate] = useState("");
   const [contractEndDate, setContractEndDate] = useState("");
   const [contractValue, setContractValue] = useState("");
+  const [accountManager, setAccountManager] = useState("");
+  const {user} = useAuth();
+  const employeeOpts = employees.map((emp)=> ({value: emp.id, label: `${emp.full_name}, ${emp.employee_id}`}))
 
   const lead = getLeadById(id);
 
@@ -80,24 +86,24 @@ export default function LeadDetailPage() {
   }
 
   const handleDelete = async () => {
-    setDeleting(true)
-    try{
-      await dispatch(deleteLeadThunk(id)).unwrap()
-    }catch(error){
-      toast.error("Failed to delete lead")
+    setDeleting(true);
+    try {
+      await dispatch(deleteLeadThunk(id)).unwrap();
+    } catch (error) {
+      toast.error("Failed to delete lead");
     }
-    setDeleting(false)
-    setDeleteModal(false)
+    setDeleting(false);
+    setDeleteModal(false);
     navigate("/leads");
   };
 
   const handleConvertToClient = async () => {
-    setUpdatingStatus(true)
-    const {name, company, email, phone, notes} = lead
+    setUpdatingStatus(true);
+    const { name, company, email, phone, notes } = lead;
     const clientData = {
       name: name,
-      email:email,
-      phone:phone,
+      email: email,
+      phone: phone,
       company: company,
       industry: industry,
       status: "active",
@@ -105,18 +111,21 @@ export default function LeadDetailPage() {
       contractStart: contractStartDate,
       contractEnd: contractEndDate,
       contractValue: contractValue,
+      accountManager: accountManager,
+    };
+    console.log(clientData);
+    try {
+      await dispatch(createClientThunk(clientData)).unwrap();
+      await dispatch(deleteLeadThunk(id)).unwrap();
+      toast.success("Lead converted to client successfully!");
+    } catch (error) {
+      toast.error(
+        "Some problem occured while converting, try refreshing the page!",
+      );
     }
-    console.log(clientData)
-    try{
-      await dispatch(createClientThunk(clientData)).unwrap()
-      await dispatch(deleteLeadThunk(id)).unwrap()
-      toast.success("Lead converted to client successfully!")
-    }catch(error){
-      toast.error("Some problem occured while converting, try refreshing the page!")
-    }
-    setUpdatingStatus(false)
-    setConvertToClientModal(false)
-    navigate("/clients")
+    setUpdatingStatus(false);
+    setConvertToClientModal(false);
+    navigate("/clients");
   };
 
   return (
@@ -319,7 +328,7 @@ export default function LeadDetailPage() {
       <Modal
         isOpen={statusModal}
         onClose={() => setStatusModal(false)}
-        title={updatingStatus? "updating":"Update Lead Status"}
+        title={updatingStatus ? "updating" : "Update Lead Status"}
         size="sm"
       >
         <div className="grid grid-cols-2 gap-2">
@@ -327,9 +336,9 @@ export default function LeadDetailPage() {
             <button
               key={s}
               onClick={async () => {
-                setUpdatingStatus(true)
+                setUpdatingStatus(true);
                 await updateLeadStatus(id, s);
-                setUpdatingStatus(false)
+                setUpdatingStatus(false);
                 setStatusModal(false);
               }}
               className={[
@@ -371,16 +380,19 @@ export default function LeadDetailPage() {
       <Modal
         isOpen={convertToClientModal}
         onClose={() => setConvertToClientModal(false)}
-        title={updatingStatus? "updating":"Convert to Client"}
+        title={updatingStatus ? "updating" : "Convert to Client"}
         size="sm"
         footer={
           <>
-            <Button variant="ghost" onClick={() => setConvertToClientModal(false)}>
+            <Button
+              variant="ghost"
+              onClick={() => setConvertToClientModal(false)}
+            >
               Cancel
             </Button>
-            <Button 
-              variant="tonal" 
-              onClick={handleConvertToClient} 
+            <Button
+              variant="tonal"
+              onClick={handleConvertToClient}
               disabled={updatingStatus}
               className="bg-[#c2e7d0] text-[#146c2e] hover:bg-[#a6d9b9]"
             >
@@ -424,6 +436,17 @@ export default function LeadDetailPage() {
               className="w-full px-4 py-3 rounded-xl text-[14px] bg-[#f2ecf4] text-[#1d1b20] placeholder-[#7a7582] outline-none focus:ring-2 focus:ring-[#6750a4] transition-all"
             />
           </div>
+          {user.role=== "admin"&& 
+          <div>
+            <Select
+              id="accountManager"
+              label="Account Manager"
+              placeholder="Select Account Manager"
+              options={employeeOpts}
+              onChange={(e) => setAccountManager(e.value)}
+              required
+            />
+          </div>}
         </div>
       </Modal>
     </div>

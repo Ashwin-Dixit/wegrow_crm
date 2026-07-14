@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, User } from "lucide-react";
 import {toast} from "react-hot-toast"
 import { useLeads } from "../hooks/useLeads";
 import Input, { Select, Textarea } from "../components/ui/Input";
@@ -8,8 +8,9 @@ import Button from "../components/ui/Button";
 import Card, { CardHeader } from "../components/ui/Card";
 import { LEAD_STATUSES, LEAD_SOURCES, INDUSTRIES } from "../data/mockData";
 import { useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addLeadThunk, updateLeadThunk } from "../store/lead/leadThunks";
+import { useAuth } from "../context/AuthProvider";
 
 const EMPTY_FORM = {
   name: "",
@@ -29,6 +30,8 @@ export default function AddLeadPage() {
   const editId = searchParams.get("edit");
   const { addLead, updateLead, getLeadById } = useLeads();
   const dispatch = useDispatch()
+  const {user} = useAuth()
+  const {employees} = useSelector((state)=>state.employees)
 
   const existing = editId ? getLeadById(editId) : null;
   const [form, setForm] = useState({
@@ -54,6 +57,7 @@ export default function AddLeadPage() {
   const sourceRef = useRef("");
   const industryRef = useRef("");
   // const valueRef = useRef("");
+  const assignedToRef = useRef("")
   const notesRef = useRef("");
 
   // const validate = () => {
@@ -77,6 +81,7 @@ export default function AddLeadPage() {
     const source = sourceRef.current.value;
     const industry = industryRef.current.value;
     // const value = valueRef.current.value;
+    const assignedTo = assignedToRef.current.value;
     const notes = notesRef.current.value;
     setForm({
       name,
@@ -87,6 +92,7 @@ export default function AddLeadPage() {
       source,
       industry,
       // value,
+      assignedTo,
       notes,
     });
     // if (!validate()) return
@@ -101,6 +107,7 @@ export default function AddLeadPage() {
       phone,
       source,
       status,
+      assigned_to: assignedTo,
       notes}})).unwrap()
       toast.success("Lead updated successfully")
       } catch(error){
@@ -119,6 +126,7 @@ export default function AddLeadPage() {
       phone,
       source,
       status,
+      assignedTo,
       notes,
     })).unwrap();
     toast.success("Lead added successfully")
@@ -142,6 +150,9 @@ export default function AddLeadPage() {
   const statusOpts = LEAD_STATUSES.map((s) => ({ value: s, label: s }));
   const sourceOpts = LEAD_SOURCES.map((s) => ({ value: s, label: s }));
   const industryOpts = INDUSTRIES.map((i) => ({ value: i, label: i }));
+  const employeeOpts = employees.map((emp)=>{
+    return {value: emp.id, label: `${emp.full_name}, ${emp.employee_id}`}
+  })
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -237,6 +248,16 @@ export default function AddLeadPage() {
               defaultValue={existing?.industry}
               required
             />
+            {user.role==="admin" ? 
+            <Select
+              id="assignedTo"
+              label="Assign to "
+              options={employeeOpts}
+              ref={assignedToRef}
+              defaultValue={existing?.assigned_to} //need to fix this
+              required
+            />
+            : null}
             {/* <Input
               id="value"
               label="Deal Value (₹)"

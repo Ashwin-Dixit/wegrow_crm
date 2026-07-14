@@ -7,11 +7,14 @@ import { fetchClients } from "../../store/client/clientThunks";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 import Notifications from "./Notifications";
+import { useAuth } from "../../context/AuthProvider";
+import fetchEmployeesThunk from "@/store/employee/employeeThunk";
 
 export default function AppLayout() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const dispatch = useDispatch()
+  const {user} = useAuth()
   useEffect(()=>{
     async function fetchData(){
       try{
@@ -23,6 +26,14 @@ export default function AppLayout() {
         await dispatch(fetchClients()).unwrap()
       }catch(error){
         toast.error("Could not fetch clients, refresh page")
+      }
+      if(user.role==="admin"){
+        try{
+          await dispatch(fetchEmployeesThunk()).unwrap()
+        }
+        catch(error){
+          toast.error("Could not fetch employees, refresh page")
+        }
       }
     }
     fetchData()

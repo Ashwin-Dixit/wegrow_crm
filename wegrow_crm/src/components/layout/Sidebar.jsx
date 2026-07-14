@@ -25,6 +25,7 @@ const navItems = [
     ],
   },
   { to: "/clients", icon: UserCheck, label: "Clients" },
+  // {to: "/employees", icon: Users, label: "Employees"},
 ];
 
 export default function Sidebar({ collapsed, setCollapsed }) {

@@ -1,20 +1,25 @@
 const supabase = require("../config/supabase");
+const { createNotification } = require("../services/notificationServices");
 
 exports.createLead = async (req, res) => {
-  const { name, company,industry, status, email, phone, notes, source } = req.body;
+  const {
+    name,
+    company,
+    industry,
+    status,
+    email,
+    phone,
+    notes,
+    source,
+    assignedTo,
+  } = req.body;
+  let assigned;
+  if (req.user.role === "admin") {
+    assigned = assignedTo;
+  } else {
+    assigned = req.user.employeeId;
+  }
   try {
-    const { data: employee, error: employeeError } = await supabase
-      .from("employees")
-      .select("id, full_name, employee_id")
-      .eq("auth_user_id", req.user.id)
-      .single();
-    if (employeeError) {
-      console.log("error in fetching employee ", employeeError);
-      return res
-        .status(400)
-        .json({ success: false, message: `Error in creating lead! ${employeeError.message}` });
-    }
-    console.log(employee);
     const { data: lead, error: leadError } = await supabase
       .from("leads")
       .insert({
@@ -26,24 +31,43 @@ exports.createLead = async (req, res) => {
         phone,
         notes,
         source,
-        assigned_to: employee.id,
+        assigned_to: assigned,
       })
       .select()
       .single();
     if (leadError) {
       console.log("error in creating lead", leadError);
-      return res
-        .status(400)
-        .json({ success: false, message: `Error in creating lead! ${leadError.message}` });
+      return res.status(400).json({
+        success: false,
+        message: `Error in creating lead! ${leadError.message}`,
+      });
     }
-
+    let assignedEmployeeName;
+    let assignedEmployeeCompanyId;
+    if (req.user.role === "admin") {
+      const { data: employee, error: employeeError } = await supabase
+        .from("employees")
+        .select("full_name, employee_id")
+        .eq("id", assigned)
+        .single();
+      assignedEmployeeName = employee.full_name;
+      assignedEmployeeCompanyId = employee.employee_id;
+    } else {
+      assignedEmployeeName = req.user.full_name;
+      assignedEmployeeCompanyId = req.user.employeeId;
+    }
     const newLead = {
       ...lead,
-      assignedTo: employee.full_name,
-      employeeId: employee.employee_id,
+      assignedTo: assignedEmployeeName,
+      employeeId: assignedEmployeeCompanyId,
       createdAt: new Date(lead.created_at),
       updatedAt: new Date(lead.updated_at),
     };
+    createNotification({
+      title: "Lead Added",
+      message: `A new lead from ${company} was assigned to ${assignedEmployeeName} by ${req.user.fullName} ${req.user.role === "admin" ? "(admin)" : ""}`,
+      type: "lead",
+    });
     return res.status(201).json({
       success: true,
       message: "Lead created successfully",
@@ -57,43 +81,26 @@ exports.createLead = async (req, res) => {
   }
 };
 exports.getLeads = async (req, res, next) => {
+  let query = supabase.from("leads").select(`*, employees (full_name, employee_id)`);
+  if(req.user.role!=="admin"){
+    query = query.eq("assigned_to", req.user.employeeId);
+  }
   try {
-    const { data: employee, error: employeeError } = await supabase
-      .from("employees")
-      .select("id, full_name, employee_id")
-      .eq("auth_user_id", req.user.id)
-      .single();
-    if (employeeError) {
-      console.log("error in fetching employee", employeeError);
-      return res
-        .status(400)
-        .json({ success: false, message: "Error in fetching leads!" });
-    }
-    const { data: leads, error: leadsError } = await supabase
-      .from("leads")
-      .select("*")
-      .eq("assigned_to", employee.id)
+    const { data: leads, error: leadsError } = await query
       .order("created_at", { ascending: false });
     if (leadsError) {
       console.log("error in fetching leads", leadsError);
-      return res
-        .status(400)
-        .json({ success: false, message: `Error in fetching leads! ${leadsError.message}` });
+      return res.status(400).json({
+        success: false,
+        message: `Error in fetching leads! ${leadsError.message}`,
+      });
     }
     const leadsArray = [];
     leads.forEach((lead) => {
       leadsArray.push({
-        id: lead.id,
-        name: lead.name,
-        company: lead.company,
-        industry: lead.industry,
-        email: lead.email,
-        phone: lead.phone,
-        status: lead.status,
-        notes: lead.notes,
-        source: lead.source,
-        assignedTo: employee.full_name,
-        employeeId: employee.employee_id,
+        ...lead,
+        assignedTo: lead.employees.full_name,
+        employeeId: lead.employees.employee_id,
         createdAt: new Date(lead.created_at),
         updatedAt: new Date(lead.updated_at),
       });
@@ -157,18 +164,7 @@ exports.updateLeadById = async (req, res, next) => {
   const leadId = req.params.id;
   const updates = req.body;
   try {
-    const { data: employee, error: employeeError } = await supabase
-      .from("employees")
-      .select("id, full_name, employee_id")
-      .eq("auth_user_id", req.user.id)
-      .single();
-    if (employeeError) {
-      console.log("error in fetching employee ", employeeError);
-      return res
-        .status(400)
-        .json({ success: false, message: "Could not update lead try again later!" });
-    }
-    
+
     const { data: existingLead, error: leadError } = await supabase
       .from("leads")
       .select("id")
@@ -189,7 +185,7 @@ exports.updateLeadById = async (req, res, next) => {
         updated_at: new Date().toISOString(),
       })
       .eq("id", leadId)
-      .select()
+      .select(`*, employees (full_name, employee_id)`)
       .single();
 
     if (updateError) {
@@ -200,8 +196,8 @@ exports.updateLeadById = async (req, res, next) => {
     }
     const newLead = {
       ...lead,
-      assignedTo: employee.full_name,
-      employeeId: employee.employee_id,
+      assignedTo: lead.employees.full_name,
+      employeeId: lead.employees.employee_id,
       createdAt: new Date(lead.created_at),
       updatedAt: new Date(lead.updated_at),
     };

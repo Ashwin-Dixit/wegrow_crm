@@ -5,6 +5,7 @@ export async function addLeadService({
   email,
   phone,
   notes,
+  assignedTo,
   source,
   status,
 }) {
@@ -24,6 +25,7 @@ export async function addLeadService({
           email,
           phone,
           notes,
+          assignedTo,
           source,
           status,
         }),
@@ -80,7 +82,7 @@ export async function deleteLeadService(leadId) {
 export async function updateLeadService(leadId, updates) {
   console.log("inside update service", updates);
   try {
-    const { name, company,industry, email, phone, notes, status, source } = updates;
+    const { name, company,industry, email, phone, notes, status, assignedTo, source } = updates;
     const res = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/api/lead/update/${leadId}`,
       {

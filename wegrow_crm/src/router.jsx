@@ -13,6 +13,7 @@ import DashboardPage from "./pages/DashboardPage";
 import LeadsPage from "./pages/LeadsPage";
 import LeadDetailPage from "./pages/LeadDetailPage";
 import ClientsPage from "./pages/ClientsPage";
+import AddClientPage from "./pages/AddClientPage"
 import ClientDetailPage from "./pages/ClientDetailPage";
 import AddLeadPage from "./pages/AddLeadPage";
 import AuthProvider from "./context/AuthProvider";
@@ -40,15 +41,9 @@ const router = createBrowserRouter([
           { path: "leads/new", element: <AddLeadPage /> },
           { path: "leads/:id", element: <LeadDetailPage /> },
           { path: "clients", element: <ClientsPage /> },
+          {path: "clients/new", element: <AddClientPage/>},
           { path: "clients/:id", element: <ClientDetailPage /> },
-          {
-            path: "settings",
-            element: (
-              <div className="flex items-center justify-center h-64 text-[#7a7582]">
-                Settings — Coming Soon
-              </div>
-            ),
-          },
+          
         ],
       },
     ],

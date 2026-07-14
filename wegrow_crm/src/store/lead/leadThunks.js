@@ -22,6 +22,7 @@ export const addLeadThunk = createAsyncThunk(
       phone,
       source,
       status,
+      assignedTo,
       notes,
     }, {rejectWithValue}) => {
       try {
@@ -33,6 +34,7 @@ export const addLeadThunk = createAsyncThunk(
         phone,
         source,
         status,
+        assignedTo,
         notes,
       })
       return data.lead;

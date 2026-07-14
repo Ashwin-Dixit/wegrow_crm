@@ -1,7 +1,10 @@
 const express = require("express")
 const router = express.Router()
-const {getClients, createClient} = require("../controllers/clientController")
+const {getClients, createClient, updateClient, deleteClientById} = require("../controllers/clientController")
 const {authMiddleware} = require("../middlewares/auth")
+const adminMiddleware = require("../middlewares/admin")
 router.get("/", authMiddleware, getClients)
 router.post("/create", authMiddleware, createClient)
+router.post("/update/:id", authMiddleware, adminMiddleware, updateClient)
+router.delete("/delete/:id", authMiddleware, adminMiddleware, deleteClientById)
 module.exports = router
