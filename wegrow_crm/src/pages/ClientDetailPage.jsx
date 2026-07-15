@@ -21,14 +21,16 @@ import { useClients } from "../hooks/useClients";
 import Badge from "../components/ui/Badge";
 import Avatar from "../components/ui/Avatar";
 import Button from "../components/ui/Button";
+import {Select} from "@/components/ui/Input"
 import Modal from "@/components/ui/Modal";
 import Card, { CardHeader } from "../components/ui/Card";
 import Projects from "../components/clients/Projects";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProjects } from "../store/project/projectThunk";
+import { fetchProjects, addProjectThunk } from "../store/project/projectThunk";
 import { deleteClientThunk } from "../store/client/clientThunks";
 import { useAuth } from "../context/AuthProvider";
-import { Input } from "@/components/ui/Input";
+import Input from "@/components/ui/Input";
+import ProjectAddModal from "@/components/clients/ProjectAddModal";
 function formatCurrency(val) {
   return `₹${val}`;
 }
@@ -52,11 +54,13 @@ function InfoRow({ icon: Icon, label, value }) {
 export default function ClientDetailPage() {
   const [deleteModal, setDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [addProjectModal, setAddProjectModal] = useState(false);
   const { id } = useParams();
   // const navigate = useNavigate();
   const dispatch = useDispatch();
   const { projects } = useSelector((state) => state.projects);
   const [fetchingProjects, setFetchingProjects] = useState(false);
+
   const { user } = useAuth();
   useEffect(() => {
     async function getProjects() {
@@ -139,6 +143,7 @@ export default function ClientDetailPage() {
       navigate("/clients");
     }
   };
+  
 
   return (
     <div className="space-y-6 max-w-4xl">
@@ -369,14 +374,17 @@ export default function ClientDetailPage() {
       <Card elevation={1} className="bg-gray-200 mt-4">
         <div className="px-3 py-1 flex justify-between items-center">
           <CardHeader title="Projects" icon={<Folder size={16} />} />
+          {user.role==="admin" ?
           <Button
             variant="filled"
             size="sm"
             icon={<Plus size={16} />}
-            onClick={() => {}}
+            onClick={() => {
+              setAddProjectModal(true)
+            }}
           >
             Add New Project
-          </Button>
+          </Button> : null}
         </div>
         {fetchingProjects && (
           <div className="w-full flex justify-center items-center">
@@ -420,79 +428,8 @@ export default function ClientDetailPage() {
           {client.company}? This action cannot be undone.
         </p>
       </Modal>
-      <Modal
-        isOpen={addProjectModal}
-        onClose={() => setAddProjectModal(false)}
-        title="Add Project"
-        size="md"
-        footer={
-          <>
-            <Button
-              variant="ghost"
-              onClick={() => setAddProjectModal(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="tonal"
-              onClick={handleAddProject}
-              disabled={addingProject}
-              className="bg-[#c2e7d0] text-[#146c2e] hover:bg-[#a6d9b9]"
-            >
-              {addingProject ? "Creating..." : "Create Project"}
-            </Button>
-          </>
-        }
-      >
-        <div className="flex flex-col gap-4">
-          <div>
-            <label className="block text-[12px] font-medium text-[#7a7582] uppercase tracking-[0.5px] mb-1.5">
-              Project Title
-            </label>
-            <Input           ///////////////////////////////
-              type="text"
-              value={projectTitle}
-              onChange={(e) => setProjectTitle(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl text-[14px] bg-[#f2ecf4] text-[#1d1b20] outline-none focus:ring-2 focus:ring-[#6750a4] transition-all"
-            />
-          </div>
-          <div>
-            <label className="block text-[12px] font-medium text-[#7a7582] uppercase tracking-[0.5px] mb-1.5">
-              Contract End Date
-            </label>
-            <input
-              type="date"
-              value={contractEndDate}
-              onChange={(e) => setContractEndDate(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl text-[14px] bg-[#f2ecf4] text-[#1d1b20] outline-none focus:ring-2 focus:ring-[#6750a4] transition-all"
-            />
-          </div>
-          <div>
-            <label className="block text-[12px] font-medium text-[#7a7582] uppercase tracking-[0.5px] mb-1.5">
-              Contract Value
-            </label>
-            <input
-              type="number"
-              value={contractValue}
-              onChange={(e) => setContractValue(e.target.value)}
-              placeholder="e.g. 50000"
-              className="w-full px-4 py-3 rounded-xl text-[14px] bg-[#f2ecf4] text-[#1d1b20] placeholder-[#7a7582] outline-none focus:ring-2 focus:ring-[#6750a4] transition-all"
-            />
-          </div>
-          {user.role === "admin" && (
-            <div>
-              <Select
-                id="accountManager"
-                label="Account Manager"
-                placeholder="Select Account Manager"
-                options={employeeOpts}
-                onChange={(e) => setAccountManager(e.value)}
-                required
-              />
-            </div>
-          )}
-        </div>
-      </Modal>
+      <ProjectAddModal addProjectModal={addProjectModal} setAddProjectModal={setAddProjectModal} id={id}/>
+      
     </div>
   );
 }

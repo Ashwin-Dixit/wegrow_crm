@@ -1,5 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit'
-import {fetchProjects, addTaskThunk, updateTaskStatusThunk} from './projectThunk'
+import {fetchProjects, addTaskThunk, updateTaskStatusThunk, addProjectThunk, deleteProjectThunk} from './projectThunk'
 
 const projectSlice = createSlice({
     name: 'projects',
@@ -23,6 +23,31 @@ const projectSlice = createSlice({
             state.loading = false
             state.error = action.payload
         })
+        //add project
+        .addCase(addProjectThunk.pending, (state) => {
+            state.loading = true
+            state.error = null
+        })
+        .addCase(addProjectThunk.fulfilled, (state, action) => {
+            state.loading = false
+            state.projects.unshift(action.payload)
+        })
+        .addCase(addProjectThunk.rejected, (state, action) => {
+            state.loading = false
+            state.error = action.payload
+        })
+        //delete project
+        .addCase(deleteProjectThunk.pending, (state) => {
+            state.loading = true
+        })
+        .addCase(deleteProjectThunk.fulfilled, (state, action) => {
+            state.projects = state.projects.filter((p)=> p.id!==action.payload)
+            state.loading = false
+        })
+        .addCase(deleteProjectThunk.rejected, (state, action) => {
+            state.loading = false
+            state.error = action.payload
+        })
         //add task
         .addCase(addTaskThunk.pending, (state) => {
             state.loading = true
@@ -42,6 +67,7 @@ const projectSlice = createSlice({
             state.loading = false
             state.error = action.payload
         })
+        //update task status
         .addCase(updateTaskStatusThunk.pending, (state) => {
             state.loading = true
             state.error = null

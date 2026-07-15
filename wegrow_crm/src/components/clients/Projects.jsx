@@ -8,15 +8,24 @@ import {
   Circle,
   Plus,
   Loader2,
+  Edit2,
+  Trash2,
+  CircleCheck,
 } from "lucide-react";
-import {toast} from "react-hot-toast"
+import { toast } from "react-hot-toast";
 import Card, { CardHeader } from "../ui/Card";
 import { Select } from "../ui/Input";
 import { useDispatch } from "react-redux";
-import { addTaskThunk, updateTaskStatusThunk } from "../../store/project/projectThunk";
+import {
+  addTaskThunk,
+  updateTaskStatusThunk,
+} from "../../store/project/projectThunk";
+import Button from "../ui/Button";
+import {useAuth} from "../../context/AuthProvider"
+
 const Projects = ({ projects }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [expandedProjectId, setExpandedProjectId] = useState(null);
   const [expandedTaskId, setExpandedTaskId] = useState(null);
   const [addingTaskForProjectId, setAddingTaskForProjectId] = useState(null);
@@ -25,8 +34,9 @@ const Projects = ({ projects }) => {
   const [taskDescription, setTaskDescription] = useState("");
   const [taskStatus, setTaskStatus] = useState("todo");
   const [taskPriority, setTaskPriority] = useState("medium");
-  const [addingTask, setAddingTask] = useState(false)
-  const [changingCompleteStatus, setChangingCompleteStatus] = useState(false)
+  const [addingTask, setAddingTask] = useState(false);
+  const [changingCompleteStatus, setChangingCompleteStatus] = useState(false);
+  const {user} = useAuth()
   const toggleProject = (id) => {
     setExpandedProjectId(expandedProjectId === id ? null : id);
   };
@@ -34,47 +44,60 @@ const Projects = ({ projects }) => {
     setExpandedTaskId(expandedTaskId === id ? null : id);
   };
   const handleAddTask = async () => {
-    console.log({taskTitle, taskDescription, taskStatus, taskPriority, projectId: addingTaskForProjectId})
-    setAddingTask(true)
-    try{
-    await dispatch(addTaskThunk({
-      title: taskTitle,
-      description: taskDescription,
-      status: taskStatus,
-      priority: taskPriority,
-      projectId: addingTaskForProjectId
-    })).unwrap();
-    toast.success("task added successfully")
-  } catch(error){
-    toast.error("Failed to add task")
-  }
-    setAddingTask(false)
+    console.log({
+      taskTitle,
+      taskDescription,
+      taskStatus,
+      taskPriority,
+      projectId: addingTaskForProjectId,
+    });
+    setAddingTask(true);
+    try {
+      await dispatch(
+        addTaskThunk({
+          title: taskTitle,
+          description: taskDescription,
+          status: taskStatus,
+          priority: taskPriority,
+          projectId: addingTaskForProjectId,
+        }),
+      ).unwrap();
+      toast.success("task added successfully");
+    } catch (error) {
+      toast.error("Failed to add task");
+    }
+    setAddingTask(false);
     setAddingTaskForProjectId(null);
     setTaskTitle("");
     setTaskDescription("");
     setTaskStatus("todo");
     setTaskPriority("medium");
-  }
+  };
   const handleCancelAddingTask = () => {
     setAddingTaskForProjectId(null);
     setTaskTitle("");
     setTaskDescription("");
     setTaskStatus("todo");
     setTaskPriority("medium");
-  }
+  };
   const handleCompleteStatus = async (taskId) => {
-    setChangingCompleteStatus(taskId)
+    setChangingCompleteStatus(taskId);
     try {
-      await dispatch(updateTaskStatusThunk({
-        id: taskId,
-        status: "completed"
-      })).unwrap();
-      toast.success("task completed successfully")
-    } catch(error){
-      toast.error("Failed to change status")
+      await dispatch(
+        updateTaskStatusThunk({
+          id: taskId,
+          status: "completed",
+        }),
+      ).unwrap();
+      toast.success("task completed successfully");
+    } catch (error) {
+      toast.error("Failed to change status");
     }
-    setChangingCompleteStatus(false)
-  }
+    setChangingCompleteStatus(false);
+  };
+  const handleDeleteProject = async () => {};
+  const handleEditProject = async () => {};
+  const handleCompleteProject = async () => {};
   return (
     <>
       <Card elevation={1}>
@@ -91,19 +114,47 @@ const Projects = ({ projects }) => {
                   onClick={() => toggleProject(project.id)}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#e8def9] flex items-center justify-center">
-                      <Folder size={14} className="text-[#4f378a]" />
-                    </div>
-                    <div>
-                      <p className="text-[14px] font-semibold text-[#1d1b20]">
-                        {project.name}
-                      </p>
-                      <p className="text-[12px] text-[#7a7582] mt-0.5">
-                        {project.status}
-                      </p>
+                      <div className="w-8 h-8 rounded-full bg-[#e8def9] flex items-center justify-center">
+                        <Folder size={14} className="text-[#4f378a]" />
+                      </div>
+                      <div>
+                        <p className="text-[14px] font-semibold text-[#1d1b20]">
+                          {project.name}
+                        </p>
+                        <p className="text-[12px] text-[#7a7582] mt-0.5">
+                          {project.status}
+                        </p>
+                      </div>
+                    <div className="ml-auto">
+                    <Button
+                      variant="tonal"
+                      size="sm"
+                      icon={<CircleCheck size={14} />}
+                      // onClick={() => setConvertToClientModal(true)}
+                      className="bg-green-100 text-green-800 hover:bg-green-200 hover:text-green-900"
+                    >
+                      Mark complete
+                    </Button>
+                    {user.role==="admin" ?(<>
+                    <Button
+                      variant="outlined"
+                      size="sm"
+                      icon={<Edit2 size={14} />}
+                      onClick={() => navigate(`/leads/new?edit=${id}`)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="danger-tonal"
+                      size="sm"
+                      icon={<Trash2 size={14} />}
+                      // onClick={() => setDeleteModal(true)}
+                    >
+                      Delete
+                    </Button></>) : null}
                     </div>
                   </div>
-                  <div>
+                  <div >
                     {isExpanded ? (
                       <ChevronUp size={18} className="text-[#7a7582]" />
                     ) : (
@@ -178,7 +229,7 @@ const Projects = ({ projects }) => {
                           type="text"
                           placeholder="Task Title"
                           onChange={(e) => {
-                            setTaskTitle(e.target.value)
+                            setTaskTitle(e.target.value);
                           }}
                           className="w-full text-[13px] border border-[#e6e0e9] rounded-md px-3 py-1.5 focus:outline-none focus:border-[#6750a4]"
                         />
@@ -188,19 +239,27 @@ const Projects = ({ projects }) => {
                         <textarea
                           placeholder="Describe the task at hand."
                           onChange={(e) => {
-                            setTaskDescription(e.target.value)
+                            setTaskDescription(e.target.value);
                           }}
                           className="w-full text-[13px] border border-[#e6e0e9] rounded-md px-3 py-1.5 focus:outline-none focus:border-[#6750a4] resize-none"
                           rows={2}
                         />
                         <div className="flex gap-3">
-                          <Select label="Status" options={["todo", "inprogress", "completed"]}
+                          <Select
+                            label="Status"
+                            options={["todo", "inprogress", "completed"]}
                             value={taskStatus}
-                            onChange={(e) => { setTaskStatus(e.target.value) }}
+                            onChange={(e) => {
+                              setTaskStatus(e.target.value);
+                            }}
                           />
-                          <Select label="Priority" options={["high", "medium", "low"]}
+                          <Select
+                            label="Priority"
+                            options={["high", "medium", "low"]}
                             value={taskPriority}
-                            onChange={(e) => { setTaskPriority(e.target.value) }}
+                            onChange={(e) => {
+                              setTaskPriority(e.target.value);
+                            }}
                           />
                         </div>
                         <div className="flex justify-end gap-2 pt-1">
@@ -210,10 +269,11 @@ const Projects = ({ projects }) => {
                           >
                             Cancel
                           </button>
-                          <button 
+                          <button
                             onClick={handleAddTask}
                             disabled={addingTask}
-                          className="px-3 py-1.5 text-[12px] font-medium bg-[#6750a4] text-white hover:bg-[#4f378a] rounded-md transition-colors">
+                            className="px-3 py-1.5 text-[12px] font-medium bg-[#6750a4] text-white hover:bg-[#4f378a] rounded-md transition-colors"
+                          >
                             {addingTask ? "Adding Task..." : "Save Task"}
                           </button>
                         </div>
@@ -238,11 +298,14 @@ const Projects = ({ projects }) => {
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       console.log("completed", task.id);
-                                      if(task.status.toLowerCase() === "completed"){
-                                        toast.info("task is already completed")
-                                        return
+                                      if (
+                                        task.status.toLowerCase() ===
+                                        "completed"
+                                      ) {
+                                        toast.info("task is already completed");
+                                        return;
                                       }
-                                      handleCompleteStatus(task.id)
+                                      handleCompleteStatus(task.id);
                                     }}
                                   >
                                     {changingCompleteStatus === task.id ? (
@@ -250,7 +313,8 @@ const Projects = ({ projects }) => {
                                         size={16}
                                         className="animate-spin text-[#7a7582] shrink-0"
                                       />
-                                    ) : task.status.toLowerCase() === "completed" ? (
+                                    ) : task.status.toLowerCase() ===
+                                      "completed" ? (
                                       <CheckCircle2
                                         size={16}
                                         className="text-[#00531b] shrink-0"

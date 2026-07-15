@@ -1,4 +1,5 @@
 const supabase = require("../config/supabase")
+const {createNotification} = require("../services/notificationServices")
 exports.getProjects = async (req, res, next) => {
     const {clientId} = req.params
     try {
@@ -23,4 +24,78 @@ exports.getProjects = async (req, res, next) => {
         console.log("error in fetching projects", error)
         return res.status(500).json({success: false, message: "Internal Server Error"})
     }
+}
+exports.addProject = async (req, res, next) => {
+  const { title, description, status, startDate, deadline, clientId } = req.body
+  console.log("inside add project controller",req.body)
+  if(!title || !description || !status || !startDate || !deadline || !clientId){
+    return res.status(400).json({success: false, message: "Please fill all the fields"})
+  }
+  try{
+    const {data: project, error: projectError} = await supabase
+    .from("projects")
+    .insert({
+      name: title,
+      description: description,
+      status: status,
+      start_date: startDate,
+      deadline: deadline,
+      client_id: clientId
+    })
+    .select(`*,
+        tasks (*)`)
+    .single()
+    if(projectError){
+      console.log("error in adding project", projectError)
+      return res.status(400).json({success: false, message: `Error in adding project! ${projectError.message}`})
+    }
+    const {data: client} = await supabase.from("clients").select(`
+      name,
+      company,
+      email,
+      phone
+      `)
+      .eq("id", clientId)
+      .single()
+    await createNotification({
+      title: "Project Added",
+      message: `'${title}' project added for '${client.name}, ${client.company}'`,
+      type: "project",
+    })
+    return res.status(200).json({
+      success: true,
+      message: "Project added successfully",
+      project: {
+        ...project,
+        createdAt: new Date(project.created_at),
+        updatedAt: new Date(project.updated_at),
+      },
+    })
+  }
+  catch(error){
+    console.log("error in adding project", error)
+    return res.status(500).json({success: false, message: "Internal Server Error"})
+  }
+}
+exports.deleteProject = async (req, res, next) => {
+  const {projectId} = req.params
+  try{
+    const { error } = await supabase.from("projects").delete().eq("id", projectId);
+
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: `Error in deleting project! ${error.message}`,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Project deleted successfully",
+      projectId,
+    });
+  } catch(error){
+    console.log(error)
+    return res.status(500).json({ssuccess: false, message: "internal server error"})
+  }
 }
