@@ -11,6 +11,7 @@ import {
   ChevronRight,
   LogOut,
   Zap,
+  FileText,
 } from "lucide-react";
 
 const navItems = [
@@ -116,7 +117,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                             "flex items-center px-4 h-10 rounded-full transition-all duration-200",
                             "text-[13px] font-medium",
                             isActive
-                              ? "bg-[#5959ab] text-white"
+                              ? "bg-[#21467a] text-white"
                               : "text-[#49454f] hover:bg-[#6750a4]/8 hover:text-[#4f378a]",
                           ].join(" ")
                         }
@@ -140,7 +141,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                   "flex items-center gap-3 px-3 h-12 rounded-full transition-all duration-200 group",
                   "text-[14px] font-medium",
                   isActive
-                    ? "bg-[#5959ab] text-white"
+                    ? "bg-[#21467a] text-white"
                     : "text-[#49454f] hover:bg-[#6750a4]/8 hover:text-[#4f378a]",
                   collapsed ? "justify-center" : "",
                 ].join(" ")
@@ -163,6 +164,30 @@ export default function Sidebar({ collapsed, setCollapsed }) {
             </NavLink>
           );
         })}
+        {!collapsed && (
+          <p className="text-[10px] font-semibold text-[#7a7582] uppercase tracking-[1px] px-3 mt-6 mb-3">
+            Invoice
+          </p>
+        )}
+
+        <a
+          href="https://wegrowconsultancyandsolution.in/invoice/index.php/sessions/login"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={[
+            "flex items-center gap-3 px-3 h-12 rounded-full transition-all duration-200 group",
+            "text-[14px] font-medium",
+            "text-[#49454f] hover:bg-[#6750a4]/8 hover:text-[#4f378a]",
+            collapsed ? "justify-center" : "",
+          ].join(" ")}
+          title={collapsed ? "Invoices" : undefined}
+        >
+          <FileText
+            size={20}
+            className="text-[#49454f] group-hover:text-[#4f378a]"
+          />
+          {!collapsed && <span>Invoices</span>}
+        </a>
 
         {/* {!collapsed && (
           <p className="text-[10px] font-semibold text-[#7a7582] uppercase tracking-[1px] px-3 mt-6 mb-3">

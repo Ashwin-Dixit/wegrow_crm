@@ -18,10 +18,10 @@ import { Select } from "../ui/Input";
 import { useDispatch } from "react-redux";
 import {
   addTaskThunk,
-  updateTaskStatusThunk,
+  updateTaskStatusThunk, deleteProjectThunk,
 } from "../../store/project/projectThunk";
 import Button from "../ui/Button";
-import {useAuth} from "../../context/AuthProvider"
+import { useAuth } from "../../context/AuthProvider";
 
 const Projects = ({ projects }) => {
   const navigate = useNavigate();
@@ -36,7 +36,9 @@ const Projects = ({ projects }) => {
   const [taskPriority, setTaskPriority] = useState("medium");
   const [addingTask, setAddingTask] = useState(false);
   const [changingCompleteStatus, setChangingCompleteStatus] = useState(false);
-  const {user} = useAuth()
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const { user } = useAuth();
   const toggleProject = (id) => {
     setExpandedProjectId(expandedProjectId === id ? null : id);
   };
@@ -95,7 +97,19 @@ const Projects = ({ projects }) => {
     }
     setChangingCompleteStatus(false);
   };
-  const handleDeleteProject = async () => {};
+  const handleDeleteProject = async () => {
+    setDeleteLoading(true)
+    const projectId = expandedProjectId
+    console.log(projectId)
+    try {
+      await dispatch(deleteProjectThunk(projectId)).unwrap();
+      toast.success("Project deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete project");
+    }
+    setDeleteModal(false)
+    setDeleteLoading(false)
+  };
   const handleEditProject = async () => {};
   const handleCompleteProject = async () => {};
   return (
@@ -114,47 +128,19 @@ const Projects = ({ projects }) => {
                   onClick={() => toggleProject(project.id)}
                 >
                   <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#e8def9] flex items-center justify-center">
-                        <Folder size={14} className="text-[#4f378a]" />
-                      </div>
-                      <div>
-                        <p className="text-[14px] font-semibold text-[#1d1b20]">
-                          {project.name}
-                        </p>
-                        <p className="text-[12px] text-[#7a7582] mt-0.5">
-                          {project.status}
-                        </p>
-                      </div>
-                    <div className="ml-auto">
-                    <Button
-                      variant="tonal"
-                      size="sm"
-                      icon={<CircleCheck size={14} />}
-                      // onClick={() => setConvertToClientModal(true)}
-                      className="bg-green-100 text-green-800 hover:bg-green-200 hover:text-green-900"
-                    >
-                      Mark complete
-                    </Button>
-                    {user.role==="admin" ?(<>
-                    <Button
-                      variant="outlined"
-                      size="sm"
-                      icon={<Edit2 size={14} />}
-                      onClick={() => navigate(`/leads/new?edit=${id}`)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="danger-tonal"
-                      size="sm"
-                      icon={<Trash2 size={14} />}
-                      // onClick={() => setDeleteModal(true)}
-                    >
-                      Delete
-                    </Button></>) : null}
+                    <div className="w-8 h-8 rounded-full bg-[#e8def9] flex items-center justify-center">
+                      <Folder size={14} className="text-[#4f378a]" />
+                    </div>
+                    <div>
+                      <p className="text-[14px] font-semibold text-[#1d1b20]">
+                        {project.name}
+                      </p>
+                      <p className="text-[12px] text-[#7a7582] mt-0.5">
+                        {project.status}
+                      </p>
                     </div>
                   </div>
-                  <div >
+                  <div>
                     {isExpanded ? (
                       <ChevronUp size={18} className="text-[#7a7582]" />
                     ) : (
@@ -165,6 +151,61 @@ const Projects = ({ projects }) => {
                 {isExpanded && (
                   <div className="bg-[#f2ecf4] p-4 border-t border-[#e6e0e9]">
                     <div className="mb-4">
+                      <div className="flex justify-end items-center gap-2">
+                        <Button
+                          variant="tonal"
+                          size="sm"
+                          icon={<CircleCheck size={14} />}
+                          // onClick={() => setConvertToClientModal(true)}
+                          className="bg-green-100 text-green-800 hover:bg-green-200 hover:text-green-900"
+                        >
+                          Mark complete
+                        </Button>
+                        {user.role === "admin" ? (
+                          <>
+                            <Button
+                              variant="outlined"
+                              size="sm"
+                              icon={<Edit2 size={14} />}
+                              onClick={() => {}}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              variant="danger-tonal"
+                              size="sm"
+                              icon={<Trash2 size={14} />}
+                              onClick={() => {console.log("inside onclick"); setDeleteModal(true)}}
+                            >
+                              Delete
+                            </Button>
+                          </>
+                        ) : null}
+                      </div>
+                      {deleteModal && (
+                        <div className="my-3 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center justify-between gap-4">
+                          <p className="text-[13px] text-red-800 font-medium m-0">
+                            Are you sure you want to delete this project?
+                          </p>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outlined"
+                              size="sm"
+                              onClick={() => setDeleteModal(false)}
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              onClick={handleDeleteProject}
+                              loading={deleteLoading}
+                            >
+                              Yes, Delete
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                       <h4 className="text-[12px] font-semibold text-[#7a7582] uppercase tracking-[0.5px] mb-2">
                         Project Details
                       </h4>

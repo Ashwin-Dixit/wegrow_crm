@@ -32,7 +32,7 @@ const ProjectAddModal = ({addProjectModal, setAddProjectModal, id}) => {
             toast.success("Project added successfully");
             setProjectTitle("")
             setProjectStatus("")
-            setProjectStatus("")
+            setDescription("")
             setStartDate("")
             setDeadline("")
           }

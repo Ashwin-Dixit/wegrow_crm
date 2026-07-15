@@ -2,7 +2,7 @@ import React from 'react'
 
 const variants = {
   filled:
-    'bg-[#6750a4] text-white hover:bg-[#4f378a] active:bg-[#5959ab] shadow-sm hover:shadow-md',
+    'bg-[#21467a] text-white hover:bg-[#4f378a] active:bg-[#5959ab] shadow-sm hover:shadow-md',
   tonal:
     'bg-[#e8def9] text-[#4f378a] hover:bg-[#d8cef0] active:bg-[#ccc2dc]',
   outlined:
