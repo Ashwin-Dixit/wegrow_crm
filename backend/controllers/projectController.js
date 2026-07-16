@@ -99,3 +99,69 @@ exports.deleteProject = async (req, res, next) => {
     return res.status(500).json({ssuccess: false, message: "internal server error"})
   }
 }
+exports.updateProject = async (req, res, next) => {
+  const {projectId} = req.params
+  console.log(req.body)
+  const {name, description, status, start_date, deadline, clientId} = req.body
+  try{
+    const {data: project, error} = await supabase
+    .from("projects")
+    .update({
+      name: name,
+      description: description,
+      status: status,
+      start_date: start_date,
+      deadline: deadline,
+    })
+    .eq("id", projectId)
+    .select(`*, tasks (*)`)
+    .single()
+    if(error){
+      console.log("error in updating project", error)
+      return res.status(400).json({success: false, message: `Error in updating project! ${error.message}`})
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Project updated successfully",
+      project: {
+        ...project,
+        createdAt: new Date(project.created_at),
+        updatedAt: new Date(project.updated_at),
+      },
+    })
+  } catch(error){
+    console.log("error in updating project", error)
+    return res.status(500).json({success: false, message: "Internal Server Error"})
+  }
+}
+exports.updateProjectStatus = async (req, res, next) => {
+  const {projectId} = req.params
+  console.log(req.body)
+  const {status} = req.body
+  try{
+    const {data: project, error} = await supabase
+    .from("projects")
+    .update({
+      status: status,
+    })
+    .eq("id", projectId)
+    .select(`*, tasks (*)`)
+    .single()
+    if(error){
+      console.log("error in updating project status", error)
+      return res.status(400).json({success: false, message: `Error in updating project status! ${error.message}`})
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Project status updated successfully",
+      project: {
+        ...project,
+        createdAt: new Date(project.created_at),
+        updatedAt: new Date(project.updated_at),
+      },
+    })
+  } catch(error){
+    console.log("error in updating project status", error)
+    return res.status(500).json({success: false, message: "Internal Server Error"})
+  }
+}

@@ -159,12 +159,12 @@ export default function LeadsPage() {
             <p className="text-[12px] text-[#7a7582]">
               Showing {filteredLeads.length} leads
             </p>
-            <p className="text-[12px] text-[#7a7582]">
+            {/* <p className="text-[12px] text-[#7a7582]">
               Total value: ₹
               {filteredLeads
                 .reduce((s, l) => s + l.value, 0)
                 .toLocaleString("en-IN")}
-            </p>
+            </p> */}
           </div>
         )}
       </Card>

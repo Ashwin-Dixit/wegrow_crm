@@ -71,3 +71,21 @@ exports.updateTaskStatus = async (req, res, next) => {
     return res.status(500).json({success: false, message: "Internal Server Error"});
   }
 }
+exports.deleteTask = async (req, res, next) => {
+  const {taskId} = req.params;
+  try{
+    const {data: task, error: taskError} = await supabase.from("tasks").delete().eq("id",taskId).select("*").single();
+    if(taskError){
+      console.log("error in deleting task", taskError);
+      return res.status(400).json({success: false, message: taskError.message});
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Task deleted successfully",
+      task: task,
+    });
+  } catch(error){
+    console.log("error in deleting task", error);
+    return res.status(500).json({success: false, message: "Internal Server Error"});
+  }
+}

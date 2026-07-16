@@ -62,3 +62,21 @@ export async function updateTaskStatusService(taskData){
         throw e
     }
 }
+export async function deleteTaskService(taskId){
+    console.log("inside delete task service", taskId)
+    try{
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/task/${taskId}`,{
+            method: 'DELETE',
+            credentials: 'include',
+        })
+        const data = await res.json()
+        console.log(data)
+        if(!res.ok){
+            throw new Error(data.message || "Failed to delete task")
+        }
+        return data
+    } catch(e){
+        console.error(e)
+        throw e
+    }
+}

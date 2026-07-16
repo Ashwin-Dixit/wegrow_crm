@@ -64,3 +64,45 @@ export async function deleteProjectService(id){
     throw error
   }
 }
+export async function updateProjectService(projectDetails){
+  const {id, name, description, status, start_date, deadline, clientId} = projectDetails
+  try{
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/project/${projectDetails.id}`,{
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(projectDetails)
+    })
+    const data = await res.json()
+    console.log(data)
+    if(!res.ok){
+      throw new Error("Failed to update")
+    }
+    return data
+  } catch(error){
+    throw error
+  }
+}
+export async function updateProjectStatusService(projectDetails){
+  const {id, status} = projectDetails
+  try{
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/project/${projectDetails.id}/update-status`,{
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(projectDetails)
+    })
+    const data = await res.json()
+    console.log(data)
+    if(!res.ok){
+      throw new Error("Failed to update")
+    }
+    return data
+  } catch(error){
+    throw error
+  }
+}

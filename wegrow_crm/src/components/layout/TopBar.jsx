@@ -10,9 +10,11 @@ import { markNotificationsReadAsync } from "../../store/notification/notificatio
 const PAGE_TITLES = {
   "/": "Dashboard",
   "/leads": "Leads",
+  "/leads/pipeline": "Leads Pipeline",
   "/leads/new": "Add New Lead",
   "/clients": "Clients",
   "/settings": "Settings",
+  "/contact": "Contacts",
 };
 
 function getTitle(pathname) {

@@ -12,6 +12,7 @@ import {
   LogOut,
   Zap,
   FileText,
+  Contact,
 } from "lucide-react";
 
 const navItems = [
@@ -22,11 +23,12 @@ const navItems = [
     label: "Leads",
     subItems: [
       { to: "/leads", label: "All Leads" },
+      { to: "/leads/pipeline", label: "Leads Pipeline"},
       { to: "/leads/new", label: "Add Lead" },
     ],
   },
   { to: "/clients", icon: UserCheck, label: "Clients" },
-  // {to: "/employees", icon: Users, label: "Employees"},
+   {to: "/contact", icon: Contact, label: "Contacts"},
 ];
 
 export default function Sidebar({ collapsed, setCollapsed }) {
