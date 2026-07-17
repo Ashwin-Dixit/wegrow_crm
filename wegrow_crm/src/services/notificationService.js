@@ -1,6 +1,7 @@
+import { apiFetch } from "./apiHelper"
 export async function fetchNotifications() {
     try {
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/notification`,{
+        const res = await apiFetch(`${import.meta.env.VITE_BACKEND_URL}/api/notification`,{
             method:"GET",
             headers:{
                 "Content-Type":"application/json"
@@ -19,7 +20,7 @@ export async function fetchNotifications() {
 
 export async function markNotificationsRead(notificationIds){
   try {
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/notification/read`,{
+    const res = await apiFetch(`${import.meta.env.VITE_BACKEND_URL}/api/notification/read`,{
       method:"POST",
       headers:{
         "Content-Type":"application/json"

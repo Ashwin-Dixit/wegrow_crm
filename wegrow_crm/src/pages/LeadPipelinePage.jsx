@@ -3,31 +3,41 @@ import { useMemo, useState } from "react";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import Stagecolumn from "../components/leads/Stagecolumn";
 import LeadCard from "../components/leads/LeadCard";
+import LeadCardView from "@/components/leads/LeadCardView";
+import { leadActions } from "../store/lead/leadSlice";
+import { useDispatch } from "react-redux";
+import { updateLeadThunk } from "@/store/lead/leadThunks";
 
 const LeadPipelinePage = () => {
   const { leads } = useSelector((state) => state.leads);
-  const [activeId, setActiveId] = useState(null);
+  const sortedLeads = useMemo(() => {
+    const array = [...leads].sort((l, m) => new Date(m.updatedAt) - new Date(l.updatedAt));
+    return array;
+  }, [leads]);
+  const dispatch = useDispatch();
 
   const newLeads = useMemo(() => {
-    const array = leads.filter((l) => l.status.toLowerCase() === "new");
+    const array = sortedLeads.filter((l) => l.status.toLowerCase() === "new");
     return array;
-  }, [leads]);
+  }, [sortedLeads]);
   const contactedLeads = useMemo(() => {
-    const array = leads.filter((l) => l.status.toLowerCase() === "contacted");
+    const array = sortedLeads.filter(
+      (l) => l.status.toLowerCase() === "contacted",
+    );
     return array;
-  }, [leads]);
+  }, [sortedLeads]);
   const qualifiedLeads = useMemo(() => {
-    const array = leads.filter((l) => l.status.toLowerCase() === "qualified");
+    const array = sortedLeads.filter((l) => l.status.toLowerCase() === "qualified");
     return array;
-  }, [leads]);
+  }, [sortedLeads]);
   const wonLeads = useMemo(() => {
-    const array = leads.filter((l) => l.status.toLowerCase() === "won");
+    const array = sortedLeads.filter((l) => l.status.toLowerCase() === "won");
     return array;
-  }, [leads]);
+  }, [sortedLeads]);
   const lostLeads = useMemo(() => {
-    const array = leads.filter((l) => l.status.toLowerCase() === "lost");
+    const array = sortedLeads.filter((l) => l.status.toLowerCase() === "lost");
     return array;
-  }, [leads]);
+  }, [sortedLeads]);
 
   const LEAD_STAGE = [
     { stage: "New", leads: newLeads },
@@ -36,38 +46,33 @@ const LeadPipelinePage = () => {
     { stage: "Won", leads: wonLeads },
     { stage: "Lost", leads: lostLeads },
   ];
+  const [activeLead, setActiveLead] = useState(null);
   const handleDragStart = (event) => {
-    setActiveId(event.active.id);
+    setActiveLead(leads.find((l) => l.id === event.active.id));
   };
-
   const handleDragEnd = (event) => {
-    setActiveId(null);
+    setActiveLead(null);
     console.log(event);
     const { active, over } = event;
     if (!over) return;
-
-    console.log("Lead:", active.id);
-
-    console.log("Dropped into:", over.id);
+    const leadId = active.id;
+    const newStatus = over.id.toLowerCase();
+    dispatch(leadActions.moveStatus({ leadId, newStatus }));
+    dispatch(updateLeadThunk({ leadId, updates: { status: newStatus } }));
   };
-
-  const activeLead = useMemo(() => {
-    if (!activeId) return null;
-    return leads.find(l => l.id === activeId);
-  }, [activeId, leads]);
 
   return (
     <>
-      <div className="flex gap-4 overflow-x-auto pb-4 h-[calc(100vh-120px)] items-start">
-        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
+        <div className="flex gap-4 overflow-x-auto pb-4 h-[calc(100vh-120px)] items-start">
           {LEAD_STAGE.map((s, idx) => (
             <Stagecolumn key={idx} stage={s.stage} leads={s.leads} />
           ))}
-          <DragOverlay>
-            {activeLead ? <LeadCard lead={activeLead} isOverlay={true} /> : null}
-          </DragOverlay>
-        </DndContext>
-      </div>
+        </div>
+        <DragOverlay>
+          {activeLead && <LeadCardView lead={activeLead} />}
+        </DragOverlay>
+      </DndContext>
     </>
   );
 };

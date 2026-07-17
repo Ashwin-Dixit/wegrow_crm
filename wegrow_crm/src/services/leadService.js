@@ -1,3 +1,4 @@
+import { apiFetch } from "./apiHelper";
 export async function addLeadService({
   name,
   company,
@@ -10,7 +11,7 @@ export async function addLeadService({
   status,
 }) {
   try {
-    const res = await fetch(
+    const res = await apiFetch(
       `${import.meta.env.VITE_BACKEND_URL}/api/lead/create`,
       {
         method: "POST",
@@ -44,7 +45,7 @@ export async function addLeadService({
 }
 export async function getLeadService() {
   try {
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/lead`, {
+    const res = await apiFetch(`${import.meta.env.VITE_BACKEND_URL}/api/lead`, {
       method: "GET",
       credentials: "include",
     });
@@ -61,7 +62,7 @@ export async function getLeadService() {
 }
 export async function deleteLeadService(leadId) {
   try {
-    const res = await fetch(
+    const res = await apiFetch(
       `${import.meta.env.VITE_BACKEND_URL}/api/lead/delete/${leadId}`,
       {
         method: "DELETE",
@@ -83,7 +84,7 @@ export async function updateLeadService(leadId, updates) {
   console.log("inside update service", updates);
   try {
     const { name, company,industry, email, phone, notes, status, assignedTo, source } = updates;
-    const res = await fetch(
+    const res = await apiFetch(
       `${import.meta.env.VITE_BACKEND_URL}/api/lead/update/${leadId}`,
       {
         method: "POST",

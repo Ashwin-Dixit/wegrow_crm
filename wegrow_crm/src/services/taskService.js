@@ -1,3 +1,4 @@
+import {apiFetch} from "./apiHelper"
 export async function createTaskService(taskData){
     console.log("inside create task service", taskData)
     const {
@@ -8,7 +9,7 @@ export async function createTaskService(taskData){
       projectId
     } = taskData
     try{
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/task/create`,{
+    const res = await apiFetch(`${import.meta.env.VITE_BACKEND_URL}/api/task/create`,{
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -41,7 +42,7 @@ export async function updateTaskStatusService(taskData){
       status,
     } = taskData
     try{
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/task/${id}/update-status`,{
+    const res = await apiFetch(`${import.meta.env.VITE_BACKEND_URL}/api/task/${id}/update-status`,{
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -65,7 +66,7 @@ export async function updateTaskStatusService(taskData){
 export async function deleteTaskService(taskId){
     console.log("inside delete task service", taskId)
     try{
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/task/${taskId}`,{
+        const res = await apiFetch(`${import.meta.env.VITE_BACKEND_URL}/api/task/${taskId}`,{
             method: 'DELETE',
             credentials: 'include',
         })

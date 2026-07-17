@@ -1,7 +1,8 @@
+import {apiFetch} from "./apiHelper";
 export async function getClientsService(){
     console.log("inside client service")
     try{
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client`,{
+    const res = await apiFetch(`${import.meta.env.VITE_BACKEND_URL}/api/client`,{
         method: 'GET',
         credentials: 'include',
     })
@@ -22,7 +23,7 @@ export async function createClientService(clientData){      //clientData =
     const {name,company,industry,status,email,phone,
         notes,contractStart,contractEnd,contractValue, accountManager} = clientData
     try{
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client/create`,{
+    const res = await apiFetch(`${import.meta.env.VITE_BACKEND_URL}/api/client/create`,{
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -47,7 +48,7 @@ export async function updateClientService({clientId, updates}){
     const {name,company,industry,status,email,phone,
         notes,contractStart,contractEnd,contractValue, accountManager} = updates
     try{
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client/update/${clientId}`,{
+    const res = await apiFetch(`${import.meta.env.VITE_BACKEND_URL}/api/client/update/${clientId}`,{
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -69,7 +70,7 @@ export async function updateClientService({clientId, updates}){
 export async function deleteClientService(clientId){
     console.log("inside delete client service", clientId)
     try{
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/client/delete/${clientId}`,{
+    const res = await apiFetch(`${import.meta.env.VITE_BACKEND_URL}/api/client/delete/${clientId}`,{
         method: 'DELETE',
         credentials: 'include',
     })

@@ -1,7 +1,8 @@
+import { apiFetch } from "./apiHelper";
 export async function getProjectsForClient(clientId) {
   console.log("inside get projects service");
   try {
-    const res = await fetch(
+    const res = await apiFetch(
       `${import.meta.env.VITE_BACKEND_URL}/api/project/${clientId}`,
       {
         method: "GET",
@@ -26,7 +27,7 @@ export async function addProjectService(projectDetails) {
   const { title, description, status, startDate, deadline, clientId } = projectDetails;
   console.log("inside add project service", projectDetails);
   try {
-    const res = await fetch(
+    const res = await apiFetch(
       `${import.meta.env.VITE_BACKEND_URL}/api/project/add-project`,
       {
         method: "POST",
@@ -50,7 +51,7 @@ export async function addProjectService(projectDetails) {
 }
 export async function deleteProjectService(id){
   try{
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/project/${id}`,{
+    const res = await apiFetch(`${import.meta.env.VITE_BACKEND_URL}/api/project/${id}`,{
       method: 'DELETE',
       credentials: 'include'
     })
@@ -67,7 +68,7 @@ export async function deleteProjectService(id){
 export async function updateProjectService(projectDetails){
   const {id, name, description, status, start_date, deadline, clientId} = projectDetails
   try{
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/project/${projectDetails.id}`,{
+    const res = await apiFetch(`${import.meta.env.VITE_BACKEND_URL}/api/project/${projectDetails.id}`,{
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -88,7 +89,7 @@ export async function updateProjectService(projectDetails){
 export async function updateProjectStatusService(projectDetails){
   const {id, status} = projectDetails
   try{
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/project/${projectDetails.id}/update-status`,{
+    const res = await apiFetch(`${import.meta.env.VITE_BACKEND_URL}/api/project/${projectDetails.id}/update-status`,{
       method: 'POST',
       credentials: 'include',
       headers: {

@@ -1,6 +1,7 @@
+import { apiFetch } from "./apiHelper"
 export async function authUserService(){
     try{
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/me`,{
+    const res = await apiFetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/me`,{
         method: "GET",
         credentials: "include",
         headers: {

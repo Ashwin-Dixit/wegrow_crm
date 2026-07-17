@@ -1,6 +1,7 @@
+import {apiFetch} from "./apiHelper"
 export async function fetchEmployees(){
     try{
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admin/employee`,
+        const res = await apiFetch(`${import.meta.env.VITE_BACKEND_URL}/api/admin/employee`,
             {
                 method: 'GET',
                 credentials: 'include',

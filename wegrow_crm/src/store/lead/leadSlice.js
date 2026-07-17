@@ -7,7 +7,11 @@ const leadSlice = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    moveStatus: (state, action) => {
+      state.leads = state.leads.map((l) => l.id===action.payload.leadId ? {...l, status: action.payload.newStatus} : l)
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchLeads.pending, (state) => {

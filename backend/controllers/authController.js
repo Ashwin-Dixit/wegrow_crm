@@ -1,5 +1,44 @@
 const supabase = require("../config/supabase");
 
+exports.refreshSession = async (req, res) => {
+  const refreshToken = req.cookies.refresh_token;
+
+  if (!refreshToken) {
+    return res.status(401).json({
+      success: false,
+      message: "Refresh token missing",
+    });
+  }
+
+  const { data, error } = await supabase.auth.refreshSession({
+    refresh_token: refreshToken,
+  });
+
+  if (error) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid refresh token",
+    });
+  }
+
+  res.cookie("access_token", data.session.access_token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    maxAge: 60 * 60 * 1000,
+  });
+
+  res.cookie("refresh_token", data.session.refresh_token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+
+  return res.json({
+    success: true,
+  });
+};
 exports.authme = async (req, res) => {
   try {
     const { data: employee, error: employeeError } = await supabase
@@ -43,9 +82,9 @@ exports.signup = async (req, res) => {
     const { data: existingUser, error: existingUserError } = await supabase
       .from("employees")
       .select("*")
-      .or(`email.eq.${email},employee_id.eq.${employeeId}`)
+      .or(`email.eq.${email},employee_id.eq.${employeeId}`);
     if (existingUser.length > 0) {
-      console.log(existingUser)
+      console.log(existingUser);
       return res.status(400).json({
         success: false,
         message: "Email or employee ID already exists",
@@ -55,9 +94,9 @@ exports.signup = async (req, res) => {
       email,
       password,
     });
-    console.log(data)
+    console.log(data);
     if (error) {
-      console.log(error)
+      console.log(error);
       return res.status(400).json({
         success: false,
         message: error.message,
@@ -71,7 +110,7 @@ exports.signup = async (req, res) => {
       employee_id: employeeId,
     });
     if (employeeError) {
-      console.log(employeeError)
+      console.log(employeeError);
       await supabase.auth.admin.deleteUser(authUserId);
       return res.status(400).json({
         success: false,
@@ -117,7 +156,13 @@ exports.login = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      maxAge: 60 * 60 * 1000,
+    });
+    res.cookie("refresh_token", signinData.session.refresh_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
     const { data: employee, error: employeeError } = await supabase
       .from("employees")
@@ -153,14 +198,12 @@ exports.login = async (req, res) => {
 
 exports.logout = async (req, res) => {
   try {
-
     res.clearCookie("access_token");
 
     return res.status(200).json({
       success: true,
       message: "Logged out successfully",
     });
-
   } catch (error) {
     console.error(error);
 
