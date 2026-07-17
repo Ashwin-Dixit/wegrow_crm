@@ -91,3 +91,26 @@ export async function logoutService(){
         throw e
     }
 }
+export async function resetPasswordService({email}){
+    try{
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/forgot-password`,{
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            "Content-Type" : "application/json",
+        },
+        body: JSON.stringify({
+            email,
+        })
+    })
+    const data = await res.json()
+    if(!res.ok){
+        throw new Error(data.message || "Failed to reset password")
+    }
+    console.log(data)
+    return data
+    }catch(e){
+        console.error(e)
+        throw e
+    }
+}

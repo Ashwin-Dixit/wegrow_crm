@@ -9,6 +9,7 @@ import { Provider } from "react-redux"
 import AppLayout from "./components/layout/AppLayout";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import DashboardPage from "./pages/DashboardPage";
 import LeadsPage from "./pages/LeadsPage";
 import LeadDetailPage from "./pages/LeadDetailPage";
@@ -21,11 +22,18 @@ import ContactDetailsPage from "./pages/ContactDetailsPage"
 import AuthProvider from "./context/AuthProvider";
 import AuthProtected from "./components/protection/AuthProtected";
 import store from "./store/reduxStore";
+import ForgotPasswordPage from "./pages/ForgotPassword";
 
 const router = createBrowserRouter([
   {
     path: "/login",
     element: <LoginPage />,
+  },
+  {path: "forgot-password",
+    element: <ForgotPasswordPage/>
+  },
+  {path: "/reset-password",
+    element: <ResetPasswordPage/>
   },
   {
     path: "/signup",

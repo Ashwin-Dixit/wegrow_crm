@@ -81,21 +81,22 @@ export default function LoginPage() {
               required
             />
 
-            {/* <div className="flex items-center justify-between text-[12px]">
-              <label className="flex items-center gap-2 cursor-pointer text-[#49454f]">
+            <div className="flex items-center justify-between text-[12px]">
+              {/* <label className="flex items-center gap-2 cursor-pointer text-[#49454f]">
                 <input
                   type="checkbox"
                   className="accent-[#6750a4] w-4 h-4 rounded"
                 />
                 Remember me
-              </label>
+              </label> */}
               <button
                 type="button"
+                onClick={() => navigate("/forgot-password")}
                 className="text-[#6750a4] hover:text-[#4f378a] font-medium transition-colors"
               >
                 Forgot password?
               </button>
-            </div> */}
+            </div>
 
             <Button
               type="submit"
