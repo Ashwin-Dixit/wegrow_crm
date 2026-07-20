@@ -1,6 +1,5 @@
 import {apiFetch} from "./apiHelper"
 export async function createTaskService(taskData){
-    console.log("inside create task service", taskData)
     const {
       title,
       description,
@@ -27,7 +26,6 @@ export async function createTaskService(taskData){
     if(!res.ok){
         throw new Error(data.message || "Failed to create task")
     }
-    console.log(data)
     return data
     }catch(e){
         console.error(e)
@@ -36,7 +34,6 @@ export async function createTaskService(taskData){
 }
 
 export async function updateTaskStatusService(taskData){
-    console.log("inside update task status service", taskData)
     const {
       id,
       status,
@@ -56,7 +53,6 @@ export async function updateTaskStatusService(taskData){
     if(!res.ok){
         throw new Error(data.message || "Failed to update task status")
     }
-    console.log(data)
     return data
     }catch(e){
         console.error(e)
@@ -64,14 +60,12 @@ export async function updateTaskStatusService(taskData){
     }
 }
 export async function deleteTaskService(taskId){
-    console.log("inside delete task service", taskId)
     try{
         const res = await apiFetch(`${import.meta.env.VITE_BACKEND_URL}/api/task/${taskId}`,{
             method: 'DELETE',
             credentials: 'include',
         })
         const data = await res.json()
-        console.log(data)
         if(!res.ok){
             throw new Error(data.message || "Failed to delete task")
         }

@@ -21,7 +21,6 @@ export default function LeadsPage() {
     setSourceFilter,
   } = useLeads();
   const exportLeads = () => {
-    console.log(filteredLeads);
     const toExportLeads = filteredLeads.map((l) => {
       return {
         Name: l.name,
@@ -102,9 +101,8 @@ export default function LeadsPage() {
                   "Lead",
                   "Status",
                   "Source",
-                  "Value",
                   "Assigned To",
-                  "Last Contact",
+                  "Last Update",
                   "",
                 ].map((h) => (
                   <th
@@ -123,7 +121,7 @@ export default function LeadsPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} className="px-4 py-16 text-center">
+                  <td colSpan={6} className="px-4 py-16 text-center">
                     <div className="flex flex-col items-center gap-3">
                       <div className="w-16 h-16 rounded-full bg-[#e8def9] flex items-center justify-center">
                         <Search size={24} className="text-[#6750a4]" />

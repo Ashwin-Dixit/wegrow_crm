@@ -65,7 +65,7 @@ exports.createLead = async (req, res) => {
     };
     createNotification({
       title: "Lead Added",
-      message: `A new lead from ${company} was assigned to ${assignedEmployeeName} by ${req.user.fullName} ${req.user.role === "admin" ? "(admin)" : ""}`,
+      message: `Lead Added: ${lead.name} from ${lead.company}, Assigned to: ${assignedEmployeeName} by ${req.user.fullName} ${req.user.role === "admin" ? "(admin)" : ""}`,
       type: "lead",
     });
     return res.status(201).json({
@@ -129,7 +129,7 @@ exports.deleteLeadById = async (req, res, next) => {
   try {
     const { data: lead, error: leadError } = await supabase
       .from("leads")
-      .select("id")
+      .select(`id, name, company, employees(full_name, employee_id) `)
       .eq("id", leadId)
       .single();
 
@@ -147,12 +147,21 @@ exports.deleteLeadById = async (req, res, next) => {
         message: `Error in deleting lead! ${error.message}`,
       });
     }
-
+    if(req.user.role==="admin"){
+     createNotification({
+      title: "Lead Deleted",
+      message: `Lead Deleted: ${lead.name}, ${lead.company}, 
+      Assigned to: ${lead.employees.full_name}, ${lead.employees.employee_id},
+      by admin: ${req.user.fullName}`,
+      type: "lead",
+    });
+    }
     return res.status(200).json({
       success: true,
       message: "Lead deleted successfully",
       leadId,
     });
+    
   } catch (error) {
     console.log("error in deleting lead", error);
     return res

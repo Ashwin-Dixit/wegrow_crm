@@ -3,7 +3,6 @@ import { getProjectsForClient, addProjectService, deleteProjectService, updatePr
 import { createTaskService, updateTaskStatusService, deleteTaskService } from "../../services/taskService"
 
 export const fetchProjects = createAsyncThunk('projects/fetchProjects', async (clientId, {rejectWithValue}) => {
-    console.log("inside fetchprojects thunk")
     try {
     const data = await getProjectsForClient(clientId)
     return data.projects
@@ -14,7 +13,6 @@ export const fetchProjects = createAsyncThunk('projects/fetchProjects', async (c
 export const addProjectThunk = createAsyncThunk('projects/addProject', async (projectData, {rejectWithValue}) => {
     try{
         const data = await addProjectService(projectData)
-        console.log("inside thunk success",data)
         return data.project
     } catch(error) {
         console.log("error in add project thunk", error)

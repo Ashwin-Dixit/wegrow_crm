@@ -27,7 +27,6 @@ exports.getProjects = async (req, res, next) => {
 }
 exports.addProject = async (req, res, next) => {
   const { title, description, status, startDate, deadline, clientId } = req.body
-  console.log("inside add project controller",req.body)
   if(!title || !description || !status || !startDate || !deadline || !clientId){
     return res.status(400).json({success: false, message: "Please fill all the fields"})
   }
@@ -59,7 +58,7 @@ exports.addProject = async (req, res, next) => {
       .single()
     await createNotification({
       title: "Project Added",
-      message: `'${title}' project added for '${client.name}, ${client.company}'`,
+      message: `Project: '${title}', Added for Client: '${client.name}, ${client.company}'`,
       type: "project",
     })
     return res.status(200).json({
@@ -80,14 +79,21 @@ exports.addProject = async (req, res, next) => {
 exports.deleteProject = async (req, res, next) => {
   const {projectId} = req.params
   try{
-    const { error } = await supabase.from("projects").delete().eq("id", projectId);
+    const { data: project, error: projectError } = await supabase.from("projects").delete().eq("id", projectId).select(`*, clients (name, company)`).single();
 
-    if (error) {
+    if (projectError) {
       return res.status(400).json({
         success: false,
-        message: `Error in deleting project! ${error.message}`,
+        message: `Error in deleting project! ${projectError.message}`,
       });
     }
+    if(req.user.role==="admin"){
+    createNotification({
+      title: "Project Deleted",
+      message: `Project: '${project.name}', Deleted for Client: '${project.clients.name}, ${project.clients.company}', by admin: ${req.user.fullName}`,
+      type: "project",
+    });
+  }
 
     return res.status(200).json({
       success: true,
@@ -101,7 +107,6 @@ exports.deleteProject = async (req, res, next) => {
 }
 exports.updateProject = async (req, res, next) => {
   const {projectId} = req.params
-  console.log(req.body)
   const {name, description, status, start_date, deadline, clientId} = req.body
   try{
     const {data: project, error} = await supabase
@@ -136,7 +141,6 @@ exports.updateProject = async (req, res, next) => {
 }
 exports.updateProjectStatus = async (req, res, next) => {
   const {projectId} = req.params
-  console.log(req.body)
   const {status} = req.body
   try{
     const {data: project, error} = await supabase
@@ -151,6 +155,11 @@ exports.updateProjectStatus = async (req, res, next) => {
       console.log("error in updating project status", error)
       return res.status(400).json({success: false, message: `Error in updating project status! ${error.message}`})
     }
+    createNotification({
+      title: "Project Status Updated",
+      message: `Project: '${project.name}', Status updated to: '${status}', by: ${req.user.fullName}`,
+      type: "project",
+    });
     return res.status(200).json({
       success: true,
       message: "Project status updated successfully",

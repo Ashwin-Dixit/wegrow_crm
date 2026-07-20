@@ -327,21 +327,6 @@ export default function ClientDetailPage() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-between p-4 bg-[#f2ecf4] rounded-xl">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-[#c2e7d0] flex items-center justify-center">
-                  <IndianRupee size={16} className="text-[#00531b]" />
-                </div>
-                <div>
-                  <p className="text-[11px] text-[#7a7582] uppercase tracking-[0.5px]">
-                    Total Revenue
-                  </p>
-                  <p className="text-[18px] font-bold text-[#00531b]">
-                    {formatCurrency(client.revenue)}
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
 
           <div className="mt-4 flex gap-2">

@@ -83,7 +83,6 @@ export default function AddClientPage() {
             accountManager, contractValue, contractStart, contractEnd, notes,
         };
         await dispatch(updateClientThunk({clientId: existing.id, updates})).unwrap()
-        console.log("updating ", existing.id, updates);
         toast.success("Client updated successfully");
       } catch (error) {
         toast.error("Failed to update Client");
@@ -96,7 +95,6 @@ export default function AddClientPage() {
           status, accountManager, contractValue, contractStart, contractEnd, notes,
         };
         await dispatch(createClientThunk(clientData)).unwrap();
-        console.log("adding client ", clientData);
         toast.success("Client added successfully");
       } catch (error) {
         toast.error("Failed to add Client");

@@ -30,6 +30,10 @@ const LeadPipelinePage = () => {
     const array = sortedLeads.filter((l) => l.status.toLowerCase() === "qualified");
     return array;
   }, [sortedLeads]);
+  const proposalLeads = useMemo(() => {
+    const array = sortedLeads.filter((l) => l.status.toLowerCase() === "proposal");
+    return array;
+  }, [sortedLeads]);
   const wonLeads = useMemo(() => {
     const array = sortedLeads.filter((l) => l.status.toLowerCase() === "won");
     return array;
@@ -43,6 +47,7 @@ const LeadPipelinePage = () => {
     { stage: "New", leads: newLeads },
     { stage: "Contacted", leads: contactedLeads },
     { stage: "Qualified", leads: qualifiedLeads },
+    {stage: "Proposal", leads: proposalLeads},
     { stage: "Won", leads: wonLeads },
     { stage: "Lost", leads: lostLeads },
   ];
@@ -52,7 +57,6 @@ const LeadPipelinePage = () => {
   };
   const handleDragEnd = (event) => {
     setActiveLead(null);
-    console.log(event);
     const { active, over } = event;
     if (!over) return;
     const leadId = active.id;

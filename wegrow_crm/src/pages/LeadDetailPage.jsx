@@ -113,7 +113,6 @@ export default function LeadDetailPage() {
       contractValue: contractValue,
       accountManager: accountManager,
     };
-    console.log(clientData);
     try {
       await dispatch(createClientThunk(clientData)).unwrap();
       await dispatch(deleteLeadThunk(id)).unwrap();
@@ -202,14 +201,6 @@ export default function LeadDetailPage() {
               </span>
             </div>
           </div>
-          <div className="text-right shrink-0">
-            <p className="text-[11px] text-[#7a7582] uppercase tracking-[0.5px]">
-              Deal Value
-            </p>
-            <p className="text-[28px] font-bold text-[#4f378a] leading-none mt-1">
-              {formatCurrency(0)}
-            </p>
-          </div>
         </div>
 
         {/* Status Pipeline */}
@@ -280,7 +271,7 @@ export default function LeadDetailPage() {
           />
           <InfoRow
             icon={Calendar}
-            label="Last Contact"
+            label="Last Update"
             value={`${new Date(lead.updatedAt).toLocaleDateString(
               "en-IN",
             )}, ${new Date(lead.updatedAt).toLocaleTimeString("en-IN", {

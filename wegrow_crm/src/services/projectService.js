@@ -1,6 +1,5 @@
 import { apiFetch } from "./apiHelper";
 export async function getProjectsForClient(clientId) {
-  console.log("inside get projects service");
   try {
     const res = await apiFetch(
       `${import.meta.env.VITE_BACKEND_URL}/api/project/${clientId}`,
@@ -13,7 +12,6 @@ export async function getProjectsForClient(clientId) {
       },
     );
     const data = await res.json();
-    console.log(data);
     if (!res.ok) {
       throw new Error(data.message || "Failed to fetch projects");
     }
@@ -25,7 +23,6 @@ export async function getProjectsForClient(clientId) {
 }
 export async function addProjectService(projectDetails) {
   const { title, description, status, startDate, deadline, clientId } = projectDetails;
-  console.log("inside add project service", projectDetails);
   try {
     const res = await apiFetch(
       `${import.meta.env.VITE_BACKEND_URL}/api/project/add-project`,
@@ -39,7 +36,6 @@ export async function addProjectService(projectDetails) {
       },
     );
     const data = await res.json();
-    console.log(data);
     if (!res.ok) {
       throw new Error(data.message || "Failed to add project");
     }
@@ -56,7 +52,6 @@ export async function deleteProjectService(id){
       credentials: 'include'
     })
     const data = await res.json()
-    console.log(data)
     if(!res.ok){
       throw new Error("Failed to delete")
     }
@@ -77,7 +72,6 @@ export async function updateProjectService(projectDetails){
       body: JSON.stringify(projectDetails)
     })
     const data = await res.json()
-    console.log(data)
     if(!res.ok){
       throw new Error("Failed to update")
     }
@@ -98,7 +92,6 @@ export async function updateProjectStatusService(projectDetails){
       body: JSON.stringify(projectDetails)
     })
     const data = await res.json()
-    console.log(data)
     if(!res.ok){
       throw new Error("Failed to update")
     }

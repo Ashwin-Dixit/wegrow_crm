@@ -57,7 +57,6 @@ export const deleteLeadThunk = createAsyncThunk(
 export const updateLeadThunk = createAsyncThunk(
   "leads/updateLeadThunk",
   async ({leadId, updates}, {rejectWithValue}) => {
-    console.log("inside thunk ", updates)
     try {
     const data = await updateLeadService(leadId, updates)
     return data.lead

@@ -128,9 +128,8 @@ export default function DashboardPage() {
                     {[
                       "Lead",
                       "Status",
-                      "Value",
                       "Assigned",
-                      "Last Contact",
+                      "Last Update",
                     ].map((h) => (
                       <th
                         key={h}
@@ -145,7 +144,7 @@ export default function DashboardPage() {
                   {recentLeads.length === 0 && (
                     <tr>
                       <td
-                        colSpan="5"
+                        colSpan="4"
                         className="px-4 py-8 text-center text-[13px] text-[#7a7582]"
                       >
                         No leads found
@@ -181,11 +180,6 @@ export default function DashboardPage() {
                       </td>
                       <td className="px-4 py-3">
                         <Badge label={lead.status} showDot />
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="text-[13px] font-semibold text-[#4f378a]">
-                          {formatCurrency(0)}
-                        </span>
                       </td>
                       <td className="px-4 py-3">
                         <span className="text-[12px] text-[#49454f]">

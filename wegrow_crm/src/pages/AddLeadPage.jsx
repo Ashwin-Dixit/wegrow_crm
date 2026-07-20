@@ -98,7 +98,6 @@ export default function AddLeadPage() {
     // if (!validate()) return
     setSaving(true);
     if(existing){
-      console.log("dispatching update", notes)
       try{
       await dispatch(updateLeadThunk({leadId: existing.id, updates: {name,
       company,

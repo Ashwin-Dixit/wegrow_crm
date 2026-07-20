@@ -59,13 +59,6 @@ const Projects = ({ projects }) => {
     setExpandedTaskId(expandedTaskId === id ? null : id);
   };
   const handleAddTask = async () => {
-    console.log({
-      taskTitle,
-      taskDescription,
-      taskStatus,
-      taskPriority,
-      projectId: addingTaskForProjectId,
-    });
     setAddingTask(true);
     try {
       await dispatch(
@@ -124,7 +117,6 @@ const Projects = ({ projects }) => {
   const handleDeleteProject = async () => {
     setDeleteLoading(true)
     const projectId = expandedProjectId
-    console.log(projectId)
     try {
       await dispatch(deleteProjectThunk(projectId)).unwrap();
       toast.success("Project deleted successfully");
@@ -247,7 +239,7 @@ const Projects = ({ projects }) => {
                               variant="danger-tonal"
                               size="sm"
                               icon={<Trash2 size={14} />}
-                              onClick={() => {console.log("inside onclick"); setDeleteModal(true)}}
+                              onClick={() => {setDeleteModal(true)}}
                             >
                               Delete
                             </Button>
@@ -296,9 +288,9 @@ const Projects = ({ projects }) => {
                               variant="danger"
                               size="sm"
                               onClick={handleDeleteProject}
-                              loading={deleteLoading}
+                              disabled={deleteLoading}
                             >
-                              Yes, Delete
+                              {deleteLoading? "Deleting..." : "Yes, Delete"}
                             </Button>
                           </div>
                         </div>
@@ -491,7 +483,6 @@ const Projects = ({ projects }) => {
                                     className="cursor-pointer"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      console.log("completed", task.id);
                                       if (
                                         task.status.toLowerCase() ===
                                         "completed"

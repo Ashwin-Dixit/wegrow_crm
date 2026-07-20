@@ -31,4 +31,11 @@ app.use('/api/notification', notificationRouter)
 app.use('/api/admin/employee', employeeRouter)
 
 const PORT = process.env.PORT || 5000
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled Rejection:", reason);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception:", error);
+});
 app.listen(process.env.PORT, "0.0.0.0", ()=>{console.log(`server on port ${PORT}`)})

@@ -49,13 +49,6 @@ export default function LeadRow({ lead }) {
         <span className="text-[13px] text-[#49454f]">{lead.source}</span>
       </td>
 
-      {/* Value */}
-      <td className="px-4 py-3">
-        <span className="text-[14px] font-semibold text-[#4f378a]">
-          {formatCurrency(0)}
-        </span>
-      </td>
-
       {/* Assigned To */}
       <td className="px-4 py-3">
         <span className="text-[13px] text-[#49454f]">{lead.assignedTo}</span>

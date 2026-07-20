@@ -74,12 +74,6 @@ export default function ClientCard({ client }) {
             {formatCurrency(client.contractValue)}
           </p>
         </div>
-        <div className="text-right">
-          <p className="text-[10px] text-[#7a7582] uppercase tracking-[0.5px]">
-            Total Revenue
-          </p>
-          <p className="text-[14px] font-semibold text-[#1d1b20]">{formatCurrency(client.revenue)}</p>
-        </div>
       </div>
     </div>
   );

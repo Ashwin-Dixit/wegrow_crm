@@ -1,6 +1,5 @@
 import {apiFetch} from "./apiHelper";
 export async function getClientsService(){
-    console.log("inside client service")
     try{
     const res = await apiFetch(`${import.meta.env.VITE_BACKEND_URL}/api/client`,{
         method: 'GET',
@@ -10,7 +9,6 @@ export async function getClientsService(){
     if(!res.ok){
         throw new Error(data.message || "Failed to fetch clients")
     }
-    console.log(data)
     return data
     }catch(e){
         console.error(e)
@@ -18,8 +16,7 @@ export async function getClientsService(){
     }
 }
 
-export async function createClientService(clientData){      //clientData = 
-    console.log("inside create client service", clientData)
+export async function createClientService(clientData){
     const {name,company,industry,status,email,phone,
         notes,contractStart,contractEnd,contractValue, accountManager} = clientData
     try{
@@ -35,7 +32,6 @@ export async function createClientService(clientData){      //clientData =
     if(!res.ok){
         throw new Error(data.message || "Failed to create client")
     }
-    console.log(data)
     return data
     }catch(e){
         console.error(e)
@@ -44,7 +40,6 @@ export async function createClientService(clientData){      //clientData =
 }
 
 export async function updateClientService({clientId, updates}){
-    console.log("inside update client service", clientId, updates)
     const {name,company,industry,status,email,phone,
         notes,contractStart,contractEnd,contractValue, accountManager} = updates
     try{
@@ -57,7 +52,6 @@ export async function updateClientService({clientId, updates}){
         body: JSON.stringify(updates),
     })
     const data = await res.json()
-    console.log(data)
     if(!res.ok){
         throw new Error(data.message || "Failed to update client")
     }
@@ -68,14 +62,12 @@ export async function updateClientService({clientId, updates}){
     }
 }
 export async function deleteClientService(clientId){
-    console.log("inside delete client service", clientId)
     try{
     const res = await apiFetch(`${import.meta.env.VITE_BACKEND_URL}/api/client/delete/${clientId}`,{
         method: 'DELETE',
         credentials: 'include',
     })
     const data = await res.json()
-    console.log(data)
     if(!res.ok){
         throw new Error(data.message || "Failed to delete client")
     }

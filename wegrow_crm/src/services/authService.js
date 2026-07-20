@@ -20,7 +20,6 @@ export async function authUserService(){
 }
 export async function signupService({fullname, email, employeeId, password}){
     try{
-    console.log(import.meta.env.VITE_BACKEND_URL)
     const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/signup`,{
         method: 'POST',
         credentials: 'include',
@@ -35,7 +34,6 @@ export async function signupService({fullname, email, employeeId, password}){
         }),    
     })
     const data = await res.json()
-    console.log(data)
     if(!res.ok){
         throw new Error(data.message || "Failed to sign up")
     }
@@ -63,7 +61,6 @@ export async function loginService({email, password}){
     if(!res.ok){
         throw new Error(data.message || "Failed to login")
     }
-    console.log(data)
     return data
     }catch(e){
         console.error(e)
@@ -84,7 +81,6 @@ export async function logoutService(){
     if(!res.ok){
         throw new Error(data.message || "Failed to logout")
     }
-    console.log(data)
     return data
     }catch(e){
         console.error(e)
@@ -107,7 +103,6 @@ export async function resetPasswordService({email}){
     if(!res.ok){
         throw new Error(data.message || "Failed to reset password")
     }
-    console.log(data)
     return data
     }catch(e){
         console.error(e)

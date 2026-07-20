@@ -44,7 +44,6 @@ export function useLeads() {
 
   const updateLeadStatus = async (id, status) => {
     await dispatch(updateLeadThunk({leadId: id, updates: {status}}))
-    console.log(leads.find((lead)=>lead.id === id))
   }
 
   return {

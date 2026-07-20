@@ -36,7 +36,6 @@ export async function addLeadService({
     if (!res.ok) {
       throw new Error(data.message || "Failed to add lead");
     }
-    console.log(data);
     return data;
   } catch (e) {
     console.error(e);
@@ -53,7 +52,6 @@ export async function getLeadService() {
     if (!res.ok) {
       throw new Error(data.message || "Failed to fetch leads");
     }
-    console.log(data);
     return data;
   } catch (e) {
     console.error(e);
@@ -73,7 +71,6 @@ export async function deleteLeadService(leadId) {
     if (!res.ok) {
       throw new Error(data.message || "Failed to delete lead");
     }
-    console.log(data);
     return data;
   } catch (e) {
     console.error(e);
@@ -81,7 +78,6 @@ export async function deleteLeadService(leadId) {
   }
 }
 export async function updateLeadService(leadId, updates) {
-  console.log("inside update service", updates);
   try {
     const { name, company,industry, email, phone, notes, status, assignedTo, source } = updates;
     const res = await apiFetch(
@@ -99,7 +95,6 @@ export async function updateLeadService(leadId, updates) {
     if (!res.ok) {
       throw new Error(data.message || "Failed to update lead");
     }
-    console.log(data);
     return data; //contain lead:newLead from api
   } catch (e) {
     console.error(e);

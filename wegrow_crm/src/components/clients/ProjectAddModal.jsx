@@ -26,7 +26,6 @@ const ProjectAddModal = ({addProjectModal, setAddProjectModal, id}) => {
             deadline: deadline,
             clientId: id,
           }
-          console.log(projectDetails);
           try{
             await dispatch(addProjectThunk(projectDetails)).unwrap()
             toast.success("Project added successfully");

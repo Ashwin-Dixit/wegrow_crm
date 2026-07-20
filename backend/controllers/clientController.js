@@ -91,7 +91,7 @@ exports.createClient = async (req, res, next) => {
     }
     createNotification({
       title: "Client Added",
-      message: `${name} from ${company} was added as a new client`,
+      message: `Client added: ${client.name} from ${client.company}, Assigned to: ${client.employees.full_name}`,
       type: "client",
     });
     return res.status(200).json({
@@ -179,7 +179,7 @@ exports.deleteClientById = async (req, res, next) => {
     try {
       const { data: client, error: clientError } = await supabase
         .from("clients")
-        .select("id")
+        .select("id, name, company")
         .eq("id", clientId)
         .single();
   
@@ -197,7 +197,13 @@ exports.deleteClientById = async (req, res, next) => {
           message: `Error in deleting client! ${error.message}`,
         });
       }
-  
+      if(req.user.role==="admin"){
+        createNotification({
+      title: "Client Deleted",
+      message: `Client deleted: ${client.name}, ${client.company}, by admin: ${req.user.fullName}`,
+      type: "client",
+    });
+      }
       return res.status(200).json({
         success: true,
         message: "Client deleted successfully",

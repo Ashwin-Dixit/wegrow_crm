@@ -84,7 +84,6 @@ exports.signup = async (req, res) => {
       .select("*")
       .or(`email.eq.${email},employee_id.eq.${employeeId}`);
     if (existingUser.length > 0) {
-      console.log(existingUser);
       return res.status(400).json({
         success: false,
         message: "Email or employee ID already exists",
@@ -94,7 +93,6 @@ exports.signup = async (req, res) => {
       email,
       password,
     });
-    console.log(data);
     if (error) {
       console.log(error);
       return res.status(400).json({
@@ -199,6 +197,7 @@ exports.login = async (req, res) => {
 exports.logout = async (req, res) => {
   try {
     res.clearCookie("access_token");
+    res.clearCookie("refresh_token")
 
     return res.status(200).json({
       success: true,
