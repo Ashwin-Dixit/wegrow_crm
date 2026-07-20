@@ -1,4 +1,4 @@
-import React from "react";
+import React, {lazy, Suspense} from "react";
 import {
   createBrowserRouter,
   RouterProvider,
@@ -7,22 +7,23 @@ import {
 import { Toaster } from "react-hot-toast"
 import { Provider } from "react-redux"
 import AppLayout from "./components/layout/AppLayout";
-import LoginPage from "./pages/LoginPage";
-import SignupPage from "./pages/SignupPage";
-import ResetPasswordPage from "./pages/ResetPasswordPage";
-import DashboardPage from "./pages/DashboardPage";
-import LeadsPage from "./pages/LeadsPage";
-import LeadDetailPage from "./pages/LeadDetailPage";
-import LeadPipelinePage from "./pages/LeadPipelinePage";
-import ClientsPage from "./pages/ClientsPage";
-import AddClientPage from "./pages/AddClientPage"
-import ClientDetailPage from "./pages/ClientDetailPage";
-import AddLeadPage from "./pages/AddLeadPage";
-import ContactDetailsPage from "./pages/ContactDetailsPage"
+const LoginPage = lazy(()=>import ("./pages/LoginPage"));
+const SignupPage = lazy(()=>import ("./pages/SignupPage"));
+const ResetPasswordPage = lazy(()=>import ("./pages/ResetPasswordPage"));
+const DashboardPage = lazy(()=>import ("./pages/DashboardPage"));
+const LeadsPage = lazy(()=>import ("./pages/LeadsPage"));
+const LeadDetailPage = lazy(()=>import ("./pages/LeadDetailPage"));
+const LeadPipelinePage = lazy(()=>import ("./pages/LeadPipelinePage"));
+const ClientsPage = lazy(()=>import ("./pages/ClientsPage"));
+const AddClientPage = lazy(()=>import ("./pages/AddClientPage"))
+const ClientDetailPage = lazy(()=>import ("./pages/ClientDetailPage"));
+const AddLeadPage = lazy(()=>import ("./pages/AddLeadPage"));
+const ContactDetailsPage = lazy(()=>import ("./pages/ContactDetailsPage"))
 import AuthProvider from "./context/AuthProvider";
 import AuthProtected from "./components/protection/AuthProtected";
 import store from "./store/reduxStore";
-import ForgotPasswordPage from "./pages/ForgotPassword";
+const ForgotPasswordPage = lazy(()=>import ("./pages/ForgotPassword"));
+import Loader from "./components/ui/Loader"
 
 const router = createBrowserRouter([
   {
@@ -69,7 +70,12 @@ export default function AppRouter() {
       <AuthProvider>
         <Provider store={store}>
           <Toaster position="top-center" reverseOrder={false} />
+          <Suspense fallback={<div className="flex flex-col items-center justify-center h-screen">
+            <Loader/>
+            <h1 className="font-bold text-lg text-primary">Getting things in order...</h1>
+            </div>}>
           <RouterProvider router={router} />
+          </Suspense>
         </Provider>
       </AuthProvider>
     </>

@@ -2,10 +2,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @import "tailwindcss";
-
+/* 4f378a */
 @theme {
   /* Primary */
-  --color-primary: #4f378a;
+  --color-primary: #21467a;
   --color-primary-container: #6750a4;
   --color-on-primary: #ffffff;
   --color-on-primary-container: #e0d2ff;
