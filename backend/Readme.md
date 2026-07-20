@@ -104,3 +104,7 @@ WHERE created_at < NOW() - INTERVAL '3 days';
 <h2>3. ENABLE REALTIME FOR TABLE 'notifications'</h2>
 
 <h2>4. ENABLE RESET PASSWORD WITH EMAIL FOR SUPABASE AUTH IN 'authentication'</h2>
+
+<h2>5. add frontend url in supabase 'configure url' for redirects https://frontend.com/reset-password and https://frontend.com/login
+
+<h2>6. setup smpt server for sending email from in supabase</h2>

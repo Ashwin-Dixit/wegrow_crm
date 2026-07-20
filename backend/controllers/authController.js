@@ -92,6 +92,9 @@ exports.signup = async (req, res) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: `${process.env.FRONTEND_URL}/login`,
+      },
     });
     if (error) {
       console.log(error);
@@ -197,7 +200,7 @@ exports.login = async (req, res) => {
 exports.logout = async (req, res) => {
   try {
     res.clearCookie("access_token");
-    res.clearCookie("refresh_token")
+    res.clearCookie("refresh_token");
 
     return res.status(200).json({
       success: true,
@@ -215,13 +218,9 @@ exports.logout = async (req, res) => {
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
 
-  const { error } = await supabase.auth.resetPasswordForEmail(
-    email,
-    {
-      redirectTo:
-        `${process.env.FRONTEND_URL}/reset-password`,
-    }
-  );
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.FRONTEND_URL}/reset-password`,
+  });
 
   if (error) {
     return res.status(400).json({
