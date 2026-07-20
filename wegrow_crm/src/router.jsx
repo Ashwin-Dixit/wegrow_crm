@@ -24,6 +24,7 @@ import AuthProtected from "./components/protection/AuthProtected";
 import store from "./store/reduxStore";
 const ForgotPasswordPage = lazy(()=>import ("./pages/ForgotPassword"));
 import Loader from "./components/ui/Loader"
+import Page404 from "./pages/Page404";
 
 const router = createBrowserRouter([
   {
@@ -61,7 +62,7 @@ const router = createBrowserRouter([
       },
     ],
   },
-  { path: "*", element: <div>page not found</div> },
+  { path: "*", element: <Page404/> },
 ]);
 
 export default function AppRouter() {

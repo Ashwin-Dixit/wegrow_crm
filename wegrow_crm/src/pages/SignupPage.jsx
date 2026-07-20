@@ -28,7 +28,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#fdf7ff] via-[#f8f2fa] to-[#e9ddff] flex items-center justify-center p-4">
+    <main className="min-h-screen bg-gradient-to-br from-[#fdf7ff] via-[#f8f2fa] to-[#e9ddff] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -118,6 +118,6 @@ export default function SignupPage() {
           © 2026 WeGrow CRM · All rights reserved
         </p>
       </div>
-    </div>
+    </main>
   )
 }
